@@ -326,6 +326,38 @@
     });
   })();
 </script>
+
+<!-- Script to fetch and display latest Beehiiv newsletter posts -->
+
+<script>
+(async () => {
+  try {
+    const res = await fetch('/.netlify/functions/newsletters');
+    if (!res.ok) throw new Error('Failed to load newsletters');
+    const posts = await res.json();
+
+    const container = document.getElementById('newsletter-container');
+    container.innerHTML = ''; // clear existing cards
+
+    posts.forEach(post => {
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML = `
+        <h4>${post.title}</h4>
+        <p style="color:var(--muted)">${post.subtitle || 'Read this post for practical trading insights.'}</p>
+        <div style="margin-top:10px">
+          <a class="btn btn-ghost" href="${post.url}" target="_blank">Read More</a>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  } catch (err) {
+    console.error('Error loading newsletters:', err);
+  }
+})();
+</script>
+
+  
 </body>
 </html>
 
