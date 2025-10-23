@@ -378,7 +378,7 @@
 fetch("/.netlify/functions/newsletters")
   .then(response => response.json())
   .then(posts => {
-    const container = document.getElementById("newsletter-posts");
+    const container = document.getElementById("newsletter");
     container.innerHTML = http://posts.map(post => `
       <div class="newsletter-card">
         ${post.feature_image ? `<img src="${post.feature_image}" alt="${post.title}">` : ""}
