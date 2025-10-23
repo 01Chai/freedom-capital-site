@@ -36,7 +36,7 @@ exports.handler = async (event, context) => {
 
     const data = await response.json();
 
-    const posts = (http://data.data || []).map(post => ({
+    const posts = (data.data || []).map(post => ({
       title: post.title || "",
       subtitle: post.subtitle || "",
       url: post.web_url || post.url || "",
@@ -60,3 +60,4 @@ exports.handler = async (event, context) => {
     };
   }
 };
+
