@@ -128,6 +128,73 @@
   /* fade-up animation (only used for the two lines above the signup form) */
   .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
   .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* blog like styling for newsletter section*/
+.newsletter-section {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .newsletter-section h3 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #222;
+  }
+
+  .newsletter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .newsletter-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .newsletter-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  }
+
+  .newsletter-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+
+  .newsletter-card h4 {
+    font-size: 1.2rem;
+    color: #333;
+    margin: 15px;
+  }
+
+  .newsletter-card p {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0 15px 15px;
+  }
+
+  .newsletter-card a {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    background: #0077ff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .newsletter-card a:hover {
+    background: #005fcc;
+  }
+
+  
 </style>
 </head>
 <body>
@@ -206,32 +273,10 @@
     </section>
 
     <!-- Earlier newsletter cards (kept as in original) -->
-    <section id="newsletter-cards" style="margin-top:28px;">
-      <h3>Newsletter</h3>
-      <div class="card-grid" id="newsletter-container">
-        <article class="card">
-          <h4>Weekly Market Insights</h4>
-          <p style="color:var(--muted)">In-depth analysis and trading mindset tips to prepare for the week ahead.</p>
-          <div style="margin-top:10px"><a class="btn btn-ghost" href="https://news.atifhussainofficial.com" target="_blank">Read More</a></div>
-        </article>
-
-        <article class="card">
-          <h4>Trade Psychology Simplified</h4>
-          <p style="color:var(--muted)">How to build the right habits and mental strength for long-term trading success.</p>
-          <div style="margin-top:10px"><a class="btn btn-ghost" href="https://news.atifhussainofficial.com" target="_blank">Read More</a></div>
-        </article>
-
-        <article class="card">
-          <h4>Freedom Capital Updates</h4>
-          <p style="color:var(--muted)">Latest updates and resources to help traders grow their skills and discipline.</p>
-          <div style="margin-top:10px"><a class="btn btn-ghost" href="https://news.atifhussainofficial.com" target="_blank">Read More</a></div>
-        </article>
-      </div>
-
-      <div style="text-align:center; margin-top:20px;">
-        <a href="https://news.atifhussainofficial.com" target="_blank" class="btn btn-primary">Read More Newsletters</a>
-      </div>
-    </section>
+    <section id="newsletter" class="newsletter-section">
+  <h3>Latest from the Newsletter</h3>
+  <div id="newsletter-posts" class="newsletter-grid"></div>
+</section>
 
     <!-- Centered Freedom Capital + signup form (fade-up applied to the text only) -->
     <section id="newsletter" style="margin-top:40px;text-align:center;">
@@ -355,6 +400,25 @@
     console.error('Error loading newsletters:', err);
   }
 })();
+
+fetch("/.netlify/functions/newsletters")
+    .then(response => response.json())
+    .then(posts => {
+      const container = document.getElementById("newsletter-container");
+      container.innerHTML = http://posts.map(post => `
+        <div class="newsletter-card">
+          ${post.feature_image ? `<img src="${post.feature_image}" alt="${post.title}">` : ""}
+          <h4>${post.title}</h4>
+          <p>${post.subtitle || ""}</p>
+          <a href="${post.url}" target="_blank">Read More</a>
+        </div>
+      `).join('');
+    })
+    .catch(error => {
+      console.error("Error loading newsletters:", error);
+      document.getElementById("newsletter-posts").innerHTML = "<p>Failed to load newsletters.</p>";
+    });
+  
 </script>
 
   
