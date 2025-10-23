@@ -16,17 +16,17 @@ exports.handler = async (event, context) => {
 
   try {
     const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3`;
-    const resp = await fetch(url, {
+    const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       }
     });
 
-    if (!resp.ok) {
-      const text = await resp.text();
+    if (!response.ok) {
+      const text = await response.text();
       return {
-        statusCode: resp.status,
+        statusCode: response.status,
         body: JSON.stringify({
           error: "Beehiiv API error",
           details: text
@@ -34,26 +34,28 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const data = await resp.json();
-    const posts = (http://data.data || []).map(p => ({
-      title: p.title || "",
-      subtitle: p.subtitle || "",
-      url: p.web_url || p.url || "",
-      feature_image: p.feature_image || "",
-      published_at: p.published_at || ""
+    const data = await response.json();
+
+    const posts = (http://data.data || []).map(post => ({
+      title: post.title || "",
+      subtitle: post.subtitle || "",
+      url: post.web_url || post.url || "",
+      feature_image: post.feature_image || "",
+      published_at: post.published_at || ""
     }));
 
     return {
       statusCode: 200,
       body: JSON.stringify(posts)
     };
-  } catch (err) {
-    console.error("newsletters function error:", err);
+
+  } catch (error) {
+    console.error("Error fetching Beehiiv posts:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
         error: "Failed to fetch Beehiiv posts",
-        details: err.message
+        details: error.message
       })
     };
   }
