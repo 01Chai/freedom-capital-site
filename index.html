@@ -375,23 +375,23 @@
 <!-- Script to fetch and display latest Beehiiv newsletter posts -->
 
 <script>
-fetch("/.netlify/functions/newsletters")
-  .then(response => response.json())
-  .then(posts => {
-    const container = document.getElementById("newsletter");
-    container.innerHTML = http://posts.map(post => `
-      <div class="newsletter-card">
-        ${post.feature_image ? `<img src="${post.feature_image}" alt="${post.title}">` : ""}
-        <h4>${post.title}</h4>
-        <p>${post.subtitle || ""}</p>
-        <a href="${post.url}" target="_blank">Read More</a>
-      </div>
-    `).join('');
-  })
-  .catch(error => {
-    console.error("Error loading newsletters:", error);
-    document.getElementById("newsletter-posts").innerHTML = "<p>Failed to load newsletters.</p>";
-  });
+  fetch("/.netlify/functions/newsletters")
+    .then(response => response.json())
+    .then(posts => {
+      const container = document.getElementById("newsletter-posts");
+      container.innerHTML = http://posts.map(post => `
+        <div class="newsletter-card">
+          ${post.feature_image ? `<img src="${post.feature_image}" alt="${post.title}">` : ""}
+          <h4>${post.title}</h4>
+          <p>${post.subtitle || ""}</p>
+          <a href="${post.url}" target="_blank">Read More</a>
+        </div>
+      `).join('');
+    })
+    .catch(error => {
+      console.error("Error loading newsletters:", error);
+      document.getElementById("newsletter-posts").innerHTML = "<p>Failed to load newsletters.</p>";
+    });
 </script>
 
   
