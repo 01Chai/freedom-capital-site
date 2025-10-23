@@ -27,7 +27,10 @@ exports.handler = async (event, context) => {
       const text = await resp.text();
       return {
         statusCode: resp.status,
-        body: JSON.stringify({ error: "Beehiiv API error", details: text })
+        body: JSON.stringify({
+          error: "Beehiiv API error",
+          details: text
+        })
       };
     }
 
