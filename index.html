@@ -140,73 +140,67 @@
   }
 
   /* --- Blog-style layout for newsletters --- */
- /* Newsletter Section */
-#newsletter {
-  max-width: 900px;
-  margin: 60px auto;
-  padding: 20px;
-  text-align: center;
-  background: #f5f5f5;
-}
+  #newsletter-posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+  }
 
-/* Cards Grid */
-#newsletter-posts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-}
+  .newsletter-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+  }
 
-/* Each Newsletter Card */
-.newsletter-card {
-  background: #f5f5f5; /* Same color as section background */
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Ensures button stays at bottom */
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+  .newsletter-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
 
-.newsletter-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-}
+  .newsletter-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
 
-.newsletter-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
+  .newsletter-card h4 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #111;
+    margin: 18px 16px 10px;
+    line-height: 1.4;
+  }
 
-.newsletter-card h4 {
-  font-size: 1.2rem;
-  color: #333;
-  margin: 15px;
-}
+  .newsletter-card p {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0 16px 16px;
+    flex-grow: 1;
+  }
 
-.newsletter-card p {
-  font-size: 0.95rem;
-  color: #555;
-  margin: 0 15px 15px;
-  flex-grow: 1; /* Ensures text takes up space but doesn’t push button */
-}
+  .newsletter-card a {
+    display: block;
+    text-align: center;
+    padding: 14px;
+    background: #0077ff;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    border-top: 1px solid #e5e5e5;
+    border-radius: 0 0 14px 14px;
+    transition: background 0.25s ease;
+  }
 
-/* Read More Button */
-.newsletter-card a {
-  display: block;
-  text-align: center;
-  padding: 12px;
-  background: #0077ff;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 0 0 12px 12px;
-  transition: background 0.2s ease;
-}
+  .newsletter-card a:hover {
+    background: #005fcc;
+  }
 
-.newsletter-card a:hover {
-  background: #00a86b; /* same green as “Read More Newsletters” button */
-}
   
 </style>
 </head>
