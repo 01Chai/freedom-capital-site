@@ -147,60 +147,50 @@
     margin-top: 40px;
   }
 
-  .newsletter-card {
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    transition: all 0.25s ease;
-    display: flex;
-    flex-direction: column;
-  }
+ .newsletter-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.03);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+}
 
-  .newsletter-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  }
+.newsletter-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(2, 6, 8, 0.5);
+}
 
-  .newsletter-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
+.newsletter-card h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #fff;
+}
 
-  .newsletter-card h4 {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #111;
-    margin: 18px 16px 10px;
-    line-height: 1.4;
-  }
+.newsletter-card p {
+  color: var(--muted);
+  flex-grow: 1;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
 
-  .newsletter-card p {
-    color: #555;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin: 0 16px 16px;
-    flex-grow: 1;
-  }
+.newsletter-card a.btn-ghost {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: background .25s ease, color .25s ease;
+  margin-top: auto;
+}
 
-  .newsletter-card a {
-    display: block;
-    text-align: center;
-    padding: 14px;
-    background: #0077ff;
-    color: #fff;
-    font-weight: 600;
-    text-decoration: none;
-    border-top: 1px solid #e5e5e5;
-    border-radius: 0 0 14px 14px;
-    transition: background 0.25s ease;
-  }
-
-  .newsletter-card a:hover {
-    background: #005fcc;
-  }
-
+.newsletter-card a.btn-ghost:hover {
+  background: var(--accent);
+  color: #071018;
+}
   
 </style>
 </head>
