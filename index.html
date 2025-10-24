@@ -140,7 +140,7 @@
   }
 
   /* --- Blog-style layout for newsletters --- */
-  #newsletter-posts {
+  #newsletter-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 24px;
@@ -415,7 +415,7 @@
 
     posts.forEach(post => {
       const card = document.createElement('article');
-      card.className = 'card';
+      card.className = 'newsletter-card';
       card.innerHTML = `
         <h4>${post.title}</h4>
         <p style="color:var(--muted)">${post.subtitle || 'Read this post for practical trading insights.'}</p>
