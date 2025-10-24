@@ -128,8 +128,18 @@
   /* fade-up animation (only used for the two lines above the signup form) */
   .fade-up { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
   .fade-up.visible { opacity: 1; transform: translateY(0); }
+  
+@media
+ (max-width: 600px) {
+    .newsletter-card h4 {
+      font-size: 1.1rem;
+    }
+    .newsletter-card img {
+      height: 160px;
+    }
+  }
 
-/* --- Blog-style layout for newsletters --- */
+  /* --- Blog-style layout for newsletters --- */
   #newsletter-posts {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -191,16 +201,6 @@
     background: #005fcc;
   }
 
-  
-@media
- (max-width: 600px) {
-    .newsletter-card h4 {
-      font-size: 1.1rem;
-    }
-    .newsletter-card img {
-      height: 160px;
-    }
-  }
   
 </style>
 </head>
