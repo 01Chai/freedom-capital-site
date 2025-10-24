@@ -147,60 +147,57 @@
     margin-top: 40px;
   }
 
-  .newsletter-card {
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    transition: all 0.25s ease;
-    display: flex;
-    flex-direction: column;
-  }
+ .newsletter-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* 🔹 ensures cards have equal height */
+}
 
-  .newsletter-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-  }
+.newsletter-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
 
-  .newsletter-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
+.newsletter-card h4 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #111;
+  margin: 18px 16px 10px;
+  line-height: 1.4;
+}
 
-  .newsletter-card h4 {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #111;
-    margin: 18px 16px 10px;
-    line-height: 1.4;
-  }
+.newsletter-card p {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 16px 16px;
+  flex-grow: 1; /* 🔹 pushes the button down */
+}
 
-  .newsletter-card p {
-    color: #555;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin: 0 16px 16px;
-    flex-grow: 1;
-  }
+.newsletter-card a {
+  display: block;
+  text-align: center;
+  padding: 14px;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  border-top: 1px solid #e5e5e5;
+  border-radius: 0 0 14px 14px;
+  background: #77807AFC;
+  transition: background 0.25s ease, transform 0.2s ease;
+  margin-top: auto; /* 🔹 ensures button sticks to bottom */
+}
 
-  .newsletter-card a {
-    display: block;
-    text-align: center;
-    padding: 14px;
-    color: #fff;
-    font-weight: 600;
-    text-decoration: none;
-    border-top: 1px solid #e5e5e5;
-    border-radius: 0 0 14px 14px;
-    transition: background 0.25s ease;
-    margin-top: auto;
-  }
-
-  .newsletter-card a:hover {
-    background: #005fcc;
-  }
-
+.newsletter-card a:hover {
+  background: #00cc66;
+  transform: translateY(-3px);
+}
 
 .card-grid {
   border-radius: 12px;
