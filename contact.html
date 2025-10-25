@@ -266,16 +266,34 @@
   </p>
 
   <div class="contact-card">
-    <form id="contactForm">
-      <div><label>Full Name</label><input class="input" type="text" id="name" placeholder="Your full name" required></div>
-      <div><label>Email</label><input class="input" type="email" id="email" placeholder="Your email" required></div>
-      <div><label>Subject</label><input class="input" type="text" id="subject" placeholder="Subject (optional)"></div>
-      <div><label>Message</label><textarea id="message" placeholder="Your message..." required></textarea></div>
-      <button class="submit" type="submit">Send Message</button>
-      <div id="form-message"></div>
-    </form>
-  </div>
+  <form id="contactForm" name="contact" method="POST" data-netlify="true">
+    <!-- Required hidden input for Netlify -->
+    <input type="hidden" name="form-name" value="contact">
 
+    <div>
+      <label for="name">Full Name</label>
+      <input class="input" type="text" id="name" name="name" placeholder="Your full name" required>
+    </div>
+
+    <div>
+      <label for="email">Email</label>
+      <input class="input" type="email" id="email" name="email" placeholder="Your email" required>
+    </div>
+
+    <div>
+      <label for="subject">Subject</label>
+      <input class="input" type="text" id="subject" name="subject" placeholder="Subject (optional)">
+    </div>
+
+    <div>
+      <label for="message">Message</label>
+      <textarea id="message" name="message" placeholder="Your message..." required></textarea>
+    </div>
+
+    <button class="submit" type="submit">Send Message</button>
+    <div id="form-message"></div>
+  </form>
+</div>
   <div class="social-icons">
     <a href="#" class="social-icon"><i class="fa-brands fa-x-twitter"></i></a>
     <a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
@@ -319,42 +337,35 @@
 </footer>
 
 <script>
-  const contactForm=document.getElementById('contactForm');
-  const contactMsg=document.getElementById('form-message');
-  contactForm.addEventListener('submit',e=>{
-    e.preventDefault();
-    const name=document.getElementById('name').value.trim();
-    const email=document.getElementById('email').value.trim();
-    const message=document.getElementById('message').value.trim();
-    if(!email.includes('@')){
-      contactMsg.style.color='var(--accent-2)';
-      contactMsg.textContent='Please enter a valid email address.';
-      return;
-    }
-    if(!message){
-      contactMsg.style.color='var(--accent-2)';
-      contactMsg.textContent='Please write a message.';
-      return;
-    }
-    contactMsg.style.color='var(--accent)';
-    contactMsg.textContent=name?`Thank you, ${name}! Your message has been sent.`:'Your message has been sent successfully.';
-    contactForm.reset();
-    setTimeout(()=>contactMsg.textContent='',5000);
-  });
+  const contactForm = document.getElementById('contactForm');
+  const contactMsg = document.getElementById('form-message');
 
-  const subForm=document.getElementById('subscribeForm');
-  const subMsg=document.getElementById('form-message-sub');
-  subForm.addEventListener('submit',e=>{
+  contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email=document.getElementById('emailSub').value.trim();
-    if(!email.includes('@')){
-      subMsg.textContent='Please enter a valid email.';
-      return;
+
+    const formData = new FormData(contactForm);
+
+    try {
+      const response = await fetch('/', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        http://contactMsg.style.color = 'var(--accent)';
+        contactMsg.textContent = '✅ Your message has been sent successfully!';
+        contactForm.reset();
+      } else {
+        http://contactMsg.style.color = 'var(--accent-2)';
+        contactMsg.textContent = '⚠️ Something went wrong. Please try again.';
+      }
+    } catch (error) {
+      console.error(error);
+      http://contactMsg.style.color = 'var(--accent-2)';
+      contactMsg.textContent = '⚠️ Network error. Please try again.';
     }
-    subMsg.style.color='var(--accent)';
-    subMsg.textContent='Thanks for subscribing! Check your inbox.';
-    subForm.reset();
-    setTimeout(()=>subMsg.textContent='',5000);
+
+    setTimeout(() => contactMsg.textContent = '', 6000);
   });
 </script>
 </body>
