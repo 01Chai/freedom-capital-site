@@ -337,36 +337,73 @@
 </footer>
 
 <script>
-  const contactForm = document.getElementById('contactForm');
-  const contactMsg = document.getElementById('form-message');
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("contactForm");
+  const message = document.getElementById("form-message");
+  const formCard = document.querySelector(".contact-card");
 
-  contactForm.addEventListener('submit', async (e) => {
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const formData = new FormData(contactForm);
+    const formData = new FormData(form);
 
-    try {
-      const response = await fetch('/', {
-        method: 'POST',
-        body: formData
+    fetch("/", {
+      method: "POST",
+      body: new URLSearchParams(formData).toString(),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    })
+      .then((res) => {
+        if (res.ok) {
+          showSuccess();
+        } else {
+          showError("⚠️ Something went wrong. Please try again.");
+        }
+      })
+      .catch(() => {
+        showError("⚠️ Network error. Please try again.");
       });
-
-      if (response.ok) {
-        http://contactMsg.style.color = 'var(--accent)';
-        contactMsg.textContent = '✅ Your message has been sent successfully!';
-        contactForm.reset();
-      } else {
-        http://contactMsg.style.color = 'var(--accent-2)';
-        contactMsg.textContent = '⚠️ Something went wrong. Please try again.';
-      }
-    } catch (error) {
-      console.error(error);
-      http://contactMsg.style.color = 'var(--accent-2)';
-      contactMsg.textContent = '⚠️ Network error. Please try again.';
-    }
-
-    setTimeout(() => contactMsg.textContent = '', 6000);
   });
+
+  function showSuccess() {
+    // Fade out form smoothly
+    http://form.style.transition = "opacity 0.5s ease";
+    http://form.style.opacity = "0";
+
+    setTimeout(() => {
+      // Hide the form, show thank-you message
+      http://form.style.display = "none";
+      const thankYou = document.createElement("div");
+      thankYou.classList.add("thank-you-message");
+      thankYou.innerHTML = `
+        <h2 style="color:var(--accent);margin-bottom:0.5rem;">✅ Thank You!</h2>
+        <p style="color:var(--muted);">Your message has been sent successfully. We'll get back to you soon.</p>
+      `;
+      formCard.appendChild(thankYou);
+
+      // Fade in the thank-you message
+      http://thankYou.style.opacity = "0";
+      http://thankYou.style.transition = "opacity 0.6s ease";
+      requestAnimationFrame(() => (http://thankYou.style.opacity = "1"));
+
+      // Optionally, reset after a few seconds
+      setTimeout(() => {
+        http://thankYou.style.opacity = "0";
+        setTimeout(() => {
+          thankYou.remove();
+          form.reset();
+          http://form.style.display = "flex";
+          requestAnimationFrame(() => (http://form.style.opacity = "1"));
+        }, 600);
+      }, 6000);
+    }, 500);
+  }
+
+  function showError(text) {
+    http://message.style.color = "var(--accent-2)";
+    message.textContent = text;
+    setTimeout(() => (message.textContent = ""), 6000);
+  }
+});
 </script>
 </body>
 </html>
