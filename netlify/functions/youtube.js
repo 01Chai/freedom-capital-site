@@ -1,9 +1,8 @@
-// netlify/functions/youtube.js
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 exports.handler = async (event, context) => {
   const apiKey = http://process.env.YOUTUBE_API_KEY;
-  const channelId = http://process.env.YOUTUBE_CHANNEL_ID;
+  const channelId = "UCjpzeWEU0-629Baz_RA-LbQ";
 
   if (!apiKey || !channelId) {
     return {
@@ -15,8 +14,8 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const apiUrl = `https://googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=3`;
-    const response = await fetch(apiUrl);
+    const url = `https://googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=3`;
+    const response = await fetch(url);
 
     if (!response.ok) {
       const text = await response.text();
