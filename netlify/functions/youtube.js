@@ -1,4 +1,5 @@
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+// netlify/functions/youtube.js
+const fetch = require("node-fetch");
 
 exports.handler = async (event, context) => {
   const apiKey = http://process.env.YOUTUBE_API_KEY;
@@ -16,18 +17,6 @@ exports.handler = async (event, context) => {
   try {
     const url = `https://googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=3`;
     const response = await fetch(url);
-
-    if (!response.ok) {
-      const text = await response.text();
-      return {
-        statusCode: response.status,
-        body: JSON.stringify({
-          error: "YouTube API error",
-          details: text,
-        }),
-      };
-    }
-
     const data = await response.json();
 
     const videos = (data.items || [])
