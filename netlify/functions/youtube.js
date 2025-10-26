@@ -1,18 +1,17 @@
 // netlify/functions/youtube.js
 const fetch = require("node-fetch");
 
-exports.handler = async function (event, context) {
+exports.handler = async (event, context) => {
   try {
-    const YOUTUBE_API_KEY = http://process.env.YOUTUBE_API_KEY; // pulled from Netlify env variable
-    const CHANNEL_ID = "UCjpzeWEU0-629Baz_RA-LbQ"; // Atif’s channel
-    const MAX_RESULTS = 3; // you can easily change this later
+    const YOUTUBE_API_KEY = http://process.env.YOUTUBE_API_KEY; // from Netlify env vars
+    const CHANNEL_ID = "UCjpzeWEU0-629Baz_RA-LbQ"; // Atif Hussain channel ID
+    const MAX_RESULTS = 3; // change to 4, 6, etc if needed later
 
     const apiUrl = `https://googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=${MAX_RESULTS}&order=date&type=video&key=${YOUTUBE_API_KEY}`;
 
     const response = await fetch(apiUrl);
     const data = await response.json();
 
-    // If YouTube returns an error
     if (!response.ok) {
       console.error("YouTube API error:", data);
       return {
@@ -21,7 +20,6 @@ exports.handler = async function (event, context) {
       };
     }
 
-    // Simplify response before sending to frontend
     const videos = http://data.items.map((item) => ({
       videoId: http://item.id.videoId,
       title: item.snippet.title,
@@ -30,6 +28,10 @@ exports.handler = async function (event, context) {
 
     return {
       statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*", // allows frontend access
+      },
       body: JSON.stringify(videos),
     };
   } catch (error) {
