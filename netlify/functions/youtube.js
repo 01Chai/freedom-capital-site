@@ -2,7 +2,7 @@
 
 const fetch = require("node-fetch");
 
-exports.handler = async function (event, context) {
+exports.handler = async (event, context) => {
   try {
     const channelId = "UCVRm8E_n-TEmk55J2t8Se1w"; // Atif Hussain's channel ID
     const apiKey = http://process.env.YOUTUBE_API_KEY;
@@ -18,8 +18,8 @@ exports.handler = async function (event, context) {
     const data = await response.json();
 
     const videos = data.items
-      .filter(item => http://item.id.kind === "youtube#video")
-      .map(item => ({
+      .filter((item) => http://item.id.kind === "youtube#video")
+      .map((item) => ({
         id: http://item.id.videoId,
         title: item.snippet.title,
         thumbnail: item.snippet.thumbnails.medium.url,
