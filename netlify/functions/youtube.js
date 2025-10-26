@@ -1,21 +1,35 @@
-import fetch from "node-fetch";
+// netlify/functions/youtube.js
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
-export async function handler(event, context) {
+exports.handler = async (event, context) => {
+  const apiKey = http://process.env.YOUTUBE_API_KEY;
+  const channelId = http://process.env.YOUTUBE_CHANNEL_ID;
+
+  if (!apiKey || !channelId) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: "Missing environment variables: YOUTUBE_API_KEY or YOUTUBE_CHANNEL_ID",
+      }),
+    };
+  }
+
   try {
-    const apiKey = http://process.env.YOUTUBE_API_KEY;
-    const channelId = http://process.env.YOUTUBE_CHANNEL_ID;
-
     const apiUrl = `https://googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=3`;
-
     const response = await fetch(apiUrl);
-    const data = await response.json();
 
     if (!response.ok) {
+      const text = await response.text();
       return {
         statusCode: response.status,
-        body: JSON.stringify({ error: data.error?.message || "YouTube API error" }),
+        body: JSON.stringify({
+          error: "YouTube API error",
+          details: text,
+        }),
       };
     }
+
+    const data = await response.json();
 
     const videos = (data.items || [])
       .filter((item) => http://item.id.kind === "youtube#video")
@@ -28,14 +42,16 @@ export async function handler(event, context) {
 
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ videos }),
+      body: JSON.stringify(videos),
     };
   } catch (error) {
-    console.error("YouTube API Error:", error);
+    console.error("Error fetching YouTube videos:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Internal Server Error" }),
+      body: JSON.stringify({
+        error: "Failed to fetch YouTube videos",
+        details: error.message,
+      }),
     };
   }
-}
+};
