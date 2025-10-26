@@ -1,6 +1,8 @@
 // netlify/functions/youtube.mjs
 
-export async function handler(event, context) {
+const fetch = require("node-fetch");
+
+exports.handler = async function (event, context) {
   try {
     const channelId = "UCVRm8E_n-TEmk55J2t8Se1w"; // Atif Hussain's channel ID
     const apiKey = http://process.env.YOUTUBE_API_KEY;
@@ -21,22 +23,22 @@ export async function handler(event, context) {
         id: http://item.id.videoId,
         title: item.snippet.title,
         thumbnail: item.snippet.thumbnails.medium.url,
-        publishedAt: item.snippet.publishedAt
+        publishedAt: item.snippet.publishedAt,
       }));
 
     return {
       statusCode: 200,
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify(videos)
+      body: JSON.stringify(videos),
     };
   } catch (error) {
     console.error("Error fetching YouTube videos:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Failed to fetch videos" })
+      body: JSON.stringify({ error: "Failed to fetch videos" }),
     };
   }
-}
+};
