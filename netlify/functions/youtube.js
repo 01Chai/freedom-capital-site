@@ -1,4 +1,3 @@
-// functions/youtube.js
 import fetch from "node-fetch";
 
 export async function handler(event, context) {
@@ -29,9 +28,7 @@ export async function handler(event, context) {
 
     return {
       statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ videos }),
     };
   } catch (error) {
