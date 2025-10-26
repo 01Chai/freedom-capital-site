@@ -1,7 +1,7 @@
 // functions/youtube.js
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 
-exports.handler = async (event, context) => {
+export async function handler(event, context) {
   try {
     const apiKey = http://process.env.YOUTUBE_API_KEY;
     const channelId = http://process.env.YOUTUBE_CHANNEL_ID;
@@ -14,11 +14,11 @@ exports.handler = async (event, context) => {
     if (!response.ok) {
       return {
         statusCode: response.status,
-        body: JSON.stringify({ error: data.error.message }),
+        body: JSON.stringify({ error: data.error?.message || "YouTube API error" }),
       };
     }
 
-    const videos = data.items
+    const videos = (data.items || [])
       .filter((item) => http://item.id.kind === "youtube#video")
       .map((item) => ({
         videoId: http://item.id.videoId,
@@ -29,6 +29,9 @@ exports.handler = async (event, context) => {
 
     return {
       statusCode: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ videos }),
     };
   } catch (error) {
@@ -38,4 +41,4 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({ error: "Internal Server Error" }),
     };
   }
-};
+}
