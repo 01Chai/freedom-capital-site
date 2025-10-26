@@ -1,7 +1,7 @@
 // functions/youtube.js
-import fetch from "node-fetch";
+const fetch = require("node-fetch");
 
-export async function handler(event, context) {
+exports.handler = async (event, context) => {
   try {
     const apiKey = http://process.env.YOUTUBE_API_KEY;
     const channelId = http://process.env.YOUTUBE_CHANNEL_ID;
@@ -18,7 +18,6 @@ export async function handler(event, context) {
       };
     }
 
-    // Filter and map only the relevant video data
     const videos = data.items
       .filter((item) => http://item.id.kind === "youtube#video")
       .map((item) => ({
@@ -39,4 +38,4 @@ export async function handler(event, context) {
       body: JSON.stringify({ error: "Internal Server Error" }),
     };
   }
-}
+};
