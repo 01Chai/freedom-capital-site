@@ -1,11 +1,10 @@
-// netlify/functions/youtube.js
-const fetch = require("node-fetch");
+// netlify/functions/youtube.mjs
 
-exports.handler = async (event, context) => {
+export async function handler(event, context) {
   try {
-    const YOUTUBE_API_KEY = http://process.env.YOUTUBE_API_KEY; // from Netlify env vars
-    const CHANNEL_ID = "UCjpzeWEU0-629Baz_RA-LbQ"; // Atif Hussain channel ID
-    const MAX_RESULTS = 3; // change to 4, 6, etc if needed later
+    const YOUTUBE_API_KEY = http://process.env.YOUTUBE_API_KEY;
+    const CHANNEL_ID = "UCjpzeWEU0-629Baz_RA-LbQ";
+    const MAX_RESULTS = 3;
 
     const apiUrl = `https://googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=${MAX_RESULTS}&order=date&type=video&key=${YOUTUBE_API_KEY}`;
 
@@ -30,7 +29,7 @@ exports.handler = async (event, context) => {
       statusCode: 200,
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*", // allows frontend access
+        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify(videos),
     };
@@ -41,4 +40,4 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({ error: "Internal Server Error" }),
     };
   }
-};
+}
