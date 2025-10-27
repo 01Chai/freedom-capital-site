@@ -1,8 +1,8 @@
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 exports.handler = async (event, context) => {
-  const apiKey = http://process.env.YOUTUBE_API_KEY;
-  const channelId = "UCjpzeWEU0-629Baz_RA-LbQ";
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  const channelId = process.env.YOUTUBE_CHANNEL_ID;
 
   if (!apiKey || !channelId) {
     return {
@@ -14,7 +14,7 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const url = `https://googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=3`;
+    const url = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=3`;
     const response = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
@@ -35,7 +35,7 @@ exports.handler = async (event, context) => {
     const data = await response.json();
 
     const videos = (data.items || []).map((item) => ({
-      videoId: http://item.id.videoId || "",
+      videoId: item.id.videoId || "",
       title: item.snippet.title || "",
       thumbnail: item.snippet.thumbnails?.medium?.url || "",
       published_at: item.snippet.publishedAt || "",
