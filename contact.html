@@ -305,14 +305,18 @@
     <h3>Freedom Capital</h3>
     <p style="color:var(--muted);max-width:60ch;margin:0 auto;">Four Weekly Insights, practical trading ideas, and expert guidance to accelerate your journey toward financial freedom.</p>
     <div class="newsletter">
-      <form id="subscribeForm">
-        <div class="inputs">
-          <input class="input-news" type="text" id="fullname" name="name" placeholder="Your name (optional)" />
-          <input class="input-news" type="email" id="emailSub" name="email" placeholder="Your email" required />
-          <button class="submit-news" type="submit">Subscribe</button>
-        </div>
-        <div id="form-message-sub" style="color:var(--muted);font-size:13px"></div>
-      </form>
+     
+
+<form id="subscription-form" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:12px">
+    <div class="inputs" role="group" aria-label="Subscribe inputs">
+      <input class="input" type="text" id="first_name" name="first_name" placeholder="Your first name" required/>
+      <input class="input" type="email" id="email" name="email" placeholder="Your email" required />
+      <button class="submit" type="submit">Subscribe</button>
+    </div>
+    <div id="form-error-message" style="color:#ff6b6b;font-size:14px;margin-top:8px;"></div>
+  </form>
+
+      
     </div>
   </section>
 </main>
