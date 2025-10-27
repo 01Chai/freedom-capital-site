@@ -1,5 +1,4 @@
-// netlify/functions/youtube.js
-const fetch = require("node-fetch");
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 exports.handler = async (event, context) => {
   const apiKey = http://process.env.YOUTUBE_API_KEY;
@@ -16,17 +15,31 @@ exports.handler = async (event, context) => {
 
   try {
     const url = `https://googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=3`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      return {
+        statusCode: response.status,
+        body: JSON.stringify({
+          error: "YouTube API error",
+          details: text,
+        }),
+      };
+    }
+
     const data = await response.json();
 
-    const videos = (data.items || [])
-      .filter((item) => http://item.id.kind === "youtube#video")
-      .map((item) => ({
-        videoId: http://item.id.videoId,
-        title: item.snippet.title,
-        thumbnail: item.snippet.thumbnails.medium.url,
-        publishedAt: item.snippet.publishedAt,
-      }));
+    const videos = (data.items || []).map((item) => ({
+      videoId: http://item.id.videoId || "",
+      title: item.snippet.title || "",
+      thumbnail: item.snippet.thumbnails?.medium?.url || "",
+      published_at: item.snippet.publishedAt || "",
+    }));
 
     return {
       statusCode: 200,
