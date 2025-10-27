@@ -529,6 +529,40 @@ background: #77807AFC;
   });
 });  
   </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const container = document.getElementById("youtube-container");
+
+  try {
+    const res = await fetch("/.netlify/functions/youtube");
+    if (!res.ok) throw new Error("Failed to load videos");
+    const videos = await res.json();
+
+    container.innerHTML = ""; // Clear placeholder videos
+
+    videos.forEach(video => {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="video-wrapper">
+          <iframe 
+            src="https://youtube.com/embed/${video.videoId}" 
+            title="${video.title}" 
+            frameborder="0" 
+            allowfullscreen>
+          </iframe>
+        </div>
+        <p style="margin-top:10px;color:var(--muted);font-size:14px;">${video.title}</p>
+      `;
+      container.appendChild(card);
+    });
+  } catch (err) {
+    console.error("Error fetching videos:", err);
+    container.innerHTML = `<p style="color:#ff6b6b;">Unable to load videos right now. Please try again later.</p>`;
+  }
+});
+</script>
   
 </body>
 </html>
