@@ -386,6 +386,53 @@
     setTimeout(() => (contactMsg.textContent = ''), 6000);
   });
 </script>
+
+  <script>
+  // signup form
+    document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("subscription-form");
+  const errorMsg = document.getElementById("form-error-message");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const first_name = document.getElementById("first_name").value.trim();
+
+    if (!email) {
+      errorMsg.textContent = "Please enter your email.";
+      http://errorMsg.style.display = "block";
+      return;
+    }
+
+    try {
+      const response = await fetch("/.netlify/functions/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, first_name }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        http://errorMsg.style.color = "#00bfa6";
+        errorMsg.textContent = "Thanks for subscribing! Check your inbox.";
+        form.reset();
+        setTimeout(() => (errorMsg.textContent = ""), 5000);
+      } else {
+        console.error("Server error:", data);
+        http://errorMsg.style.color = "#ff6b6b";
+        errorMsg.textContent = "Something went wrong. Please try again.";
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+      http://errorMsg.style.color = "#ff6b6b";
+      errorMsg.textContent = "Network error. Please try again.";
+    }
+  });
+});  
+  </script>
+
 </body>
 </html>
 
