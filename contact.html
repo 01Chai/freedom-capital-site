@@ -240,6 +240,38 @@
   .social:hover { color: #fff; background: rgba(255,255,255,0.03); transform: translateY(-4px); }
 
   @media (max-width:900px) { nav ul { display: none; } }
+
+  /* ==== RESPONSIVE FIX FOR SIGNUP FORM ==== */
+@media
+ (max-width: 600px) {
+  .newsletter .inputs {
+    flex-direction: column;
+    width: 100%;
+    max-width: 90%;
+  }
+
+  .newsletter .input,
+  .newsletter .submit {
+    width: 100%;
+  }
+
+  .newsletter .submit {
+    margin-top: 6px;
+  }
+
+  .newsletter p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    padding: 0 1rem;
+  }
+}
+@media
+ (max-width: 600px) {
+  .input, .input-news {
+    padding: 14px 16px;
+    font-size: 1rem;
+  }
+}
   
   
 </style>
