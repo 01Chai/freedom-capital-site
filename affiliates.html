@@ -280,14 +280,15 @@
       </p>
 
       <div class="newsletter">
-        <form id="subscribeForm" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:12px">
-          <div class="inputs">
-            <input class="input" type="text" id="fullname" name="name" placeholder="Your name (optional)" />
-            <input class="input" type="email" id="email" name="email" placeholder="Your email" required />
-            <button class="submit" type="submit">Subscribe</button>
-          </div>
-          <div id="form-message" style="color:var(--muted);font-size:13px"></div>
+        <form id="subscription-form" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:12px">
+    <div class="inputs" role="group" aria-label="Subscribe inputs">
+      <input class="input" type="text" id="first_name" name="first_name" placeholder="Your first name" required/>
+      <input class="input" type="email" id="email" name="email" placeholder="Your email" required />
+      <button class="submit" type="submit">Subscribe</button>
+    </div>
+          <div id="form-error-message" style="color:var(--muted);font-size:13px"></div>
         </form>
+        
         <div style="margin-top:6px"><a href="#" style="color:var(--accent);text-decoration:underline;">View past issues →</a></div>
       </div>
     </section>
@@ -315,21 +316,50 @@
   </footer>
 
 <script>
-  const form=document.getElementById('subscribeForm');
-  const msg=document.getElementById('form-message');
-  form.addEventListener('submit',ev=>{
-    ev.preventDefault();
-    const name=document.getElementById('fullname').value.trim();
-    const email=document.getElementById('email').value.trim();
-    if(!email.includes('@')){
-      msg.textContent='Please enter a valid email address.';
+  // signup form
+    document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("subscription-form");
+  const errorMsg = document.getElementById("form-error-message");
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const first_name = document.getElementById("first_name").value.trim();
+
+    if (!email) {
+      errorMsg.textContent = "Please enter your email.";
+      http://errorMsg.style.display = "block";
       return;
     }
-    http://msg.style.color='var(--accent)';
-    msg.textContent=name?`Thanks, ${name}! Check your inbox.`:'Thanks! Check your inbox.';
-    form.reset();
-    setTimeout(()=>msg.textContent='',5000);
+
+    try {
+      const response = await fetch("/.netlify/functions/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, first_name }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        http://errorMsg.style.color = "#00bfa6";
+        errorMsg.textContent = "Thanks for subscribing! Check your inbox.";
+        form.reset();
+        setTimeout(() => (errorMsg.textContent = ""), 5000);
+      } else {
+        console.error("Server error:", data);
+        http://errorMsg.style.color = "#ff6b6b";
+        errorMsg.textContent = "Something went wrong. Please try again.";
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+      http://errorMsg.style.color = "#ff6b6b";
+      errorMsg.textContent = "Network error. Please try again.";
+    }
   });
-</script>
+});  
+  </script>
+
 </body>
 </html>
