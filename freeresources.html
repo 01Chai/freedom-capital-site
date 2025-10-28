@@ -207,9 +207,9 @@
   }
   .social:hover { color: #fff; background: rgba(255,255,255,0.03); transform: translateY(-4px); }
 
-  /*@media (max-width:900px) {
+  @media (max-width:900px) {
     nav ul { display: none; }
-  }*/
+  }
   
   .courses-grid {
   display: flex;
@@ -275,135 +275,62 @@
   }
 }
 
-/* Morphing hamburger → X */
+/* Mobile nav styles */
 .menu-toggle {
   display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 28px;
-  height: 22px;
-  border: none;
   background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 24px;
   cursor: pointer;
-  z-index: 1001; /* sits above the sliding menu */
 }
 
-.menu-toggle .bar {
-  height: 3px;
-  width: 100%;
-  background-color: white; /* or your accent */
-  border-radius: 2px;
-  transition: all 0.35s ease;
-}
-
-/* morphing into X */
-.menu-toggle.open .bar:nth-child(1) {
-  transform: rotate(45deg);
-  position: relative;
-  top: 9px;
-}
-.menu-toggle.open .bar:nth-child(2) {
-  opacity: 0;
-}
-.menu-toggle.open .bar:nth-child(3) {
-  transform: rotate(-45deg);
-  position: relative;
-  top: -9px;
-}
-
-
-
-
-
-
-
-@media (max-width: 900px) {
-  .menu-toggle {
-    display: flex;
-  }
-
+/* Hide nav links by default on small screens and animate show/hide */
+@media
+ (max-width: 900px) {
   nav ul {
-    position: fixed;
-    top: 0;
-    right: -100%; /* start hidden off-screen */
-    height: 100vh;
-    width: 70%;
-    background-color: #0f1720; /* your site’s background color */
+    display: none;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 30px;
-    transition: right 0.4s ease;
-    z-index: 1000;
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: rgba(15, 23, 32, 0.95);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+
+    /* start hidden state for animation */
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+    transform-origin: top right;
+    transition: opacity 220ms var(--ease), transform 220ms var(--ease);
+    pointer-events: none;
   }
 
+  /* visible state */
   nav ul.show {
-    right: 0; /* slides in */
+    display: flex; /* ensure flex layout when visible */
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
   }
 
-  nav ul li a {
-    font-size: 1.2rem;
+  .menu-toggle {
+    display: block;
   }
 }
 
+/* Icon animation: smooth rotate/scale when switching */
+.menu-toggle i {
+  transition: transform 220ms var(--ease), opacity 220ms var(--ease);
+  display: inline-block; /* ensures transform works well */
+}
+
+/* Optional: small rotate when opening for micro-feedback */
+.menu-toggle.open i {
+  transform: rotate(90deg) scale(1.05);
+}
 	
-/*.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  z-index: 999;
-}
-
-nav ul.show ~ .overlay {
-  opacity: 1;
-  pointer-events: auto;
-}*/
-
-/* Overlay background */
-.menu-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(8px);
-  background: rgba(255, 255, 255, 0.1);
-  display: none;
-  z-index: 10;
-  transition: opacity 0.3s ease;
-}
-
-.menu-overlay.active {
-  display: block;
-  opacity: 1;
-}
-
-/* The actual menu drawer */
-nav {
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 70%;
-  height: 100vh;
-  background: rgba(15, 23, 32, 0.4); /* glass-like dark panel */
-  backdrop-filter: blur(12px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: right 0.4s ease;
-  z-index: 20;
-}
-
-nav.active {
-  right: 0;
-}
-
-
-
 </style>
 </head>
 
@@ -416,12 +343,6 @@ nav.active {
       </div>
 
       <nav aria-label="Main navigation">
-		  <button class="menu-toggle" aria-label="Toggle menu">
-  <span class="bar"></span>
-  <span class="bar"></span>
-  <span class="bar"></span>
-</button>
-		  
         <ul>
           <li><a href="inde">Home</a></li>
           <li><a href="freeresources.html" style="color:#fff;">Free Resources</a></li>
@@ -430,8 +351,11 @@ nav.active {
           <li><a href="about.html">About</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
+        <button class="menu-toggle" aria-label="Toggle menu">
+	<i class="fa-solid fa-bars"></i>
+  </button>
+
       </nav>
-		<div class="menu-overlay"></div>
     </div>
   </header>
 
@@ -512,25 +436,48 @@ nav.active {
   </footer>
 
 <script>
-const menuBtn = document.querySelector('.menu-btn');
-const nav = document.querySelector('nav');
-const overlay = document.querySelector('.menu-overlay');
+  // Mobile menu toggle with icon switch and small animation
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navLinks = document.querySelector('nav ul');
 
-menuBtn.addEventListener('click', () => {
-  menuBtn.classList.toggle('open');
-  nav.classList.toggle('active');
-  overlay.classList.toggle('active');
-});
+  // safety: only run if elements exist
+  if (menuToggle && navLinks) {
+    const toggleIcon = menuToggle.querySelector('i');
 
-overlay.addEventListener('click', () => {
-  menuBtn.classList.remove('open');
-  nav.classList.remove('active');
-  overlay.classList.remove('active');
-});
+    menuToggle.addEventListener('click', () => {
+      // toggle menu visibility
+      navLinks.classList.toggle('show');
+
+      // toggle button open class (used for small css transform)
+      menuToggle.classList.toggle('open');
+
+      // toggle icon (bars <-> x)
+      if (toggleIcon) {
+        if (navLinks.classList.contains('show')) {
+          toggleIcon.classList.remove('fa-bars');
+          toggleIcon.classList.add('fa-xmark'); // X icon
+        } else {
+          toggleIcon.classList.remove('fa-xmark');
+          toggleIcon.classList.add('fa-bars');
+        }
+      }
+    });
+
+    // Optional: close menu when clicking outside (nice UX)
+    document.addEventListener('click', (e) => {
+      if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
+        if (navLinks.classList.contains('show')) {
+          navLinks.classList.remove('show');
+          menuToggle.classList.remove('open');
+          if (toggleIcon) {
+            toggleIcon.classList.remove('fa-xmark');
+            toggleIcon.classList.add('fa-bars');
+          }
+        }
+      }
+    });
+  }
 </script>
-
-
-
 
 	
  <script>
@@ -581,4 +528,3 @@ overlay.addEventListener('click', () => {
 
 </body>
 </html>
-
