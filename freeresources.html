@@ -347,7 +347,7 @@
 }
 
 	
-.overlay {
+/*.overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -360,7 +360,7 @@
 nav ul.show ~ .overlay {
   opacity: 1;
   pointer-events: auto;
-}
+}*/
 
 .menu-overlay {
   display: none;
@@ -411,6 +411,7 @@ nav ul.show ~ .overlay {
           <li><a href="contact.html">Contact</a></li>
         </ul>
       </nav>
+		<div class="menu-overlay"></div>
     </div>
   </header>
 
@@ -493,36 +494,32 @@ nav ul.show ~ .overlay {
 <script>
   const menuToggle = document.querySelector('.menu-toggle');
   const navLinks = document.querySelector('nav ul');
+  const overlay = document.querySelector('.menu-overlay');
 
   menuToggle.addEventListener('click', () => {
-  navLinks.classList.toggle('show');
-  overlay.classList.toggle('show');
-  document.body.classList.toggle('menu-open');
-});
+    menuToggle.classList.toggle('open');
+    navLinks.classList.toggle('show');
+    overlay.classList.toggle('show');
+    document.body.classList.toggle('menu-open');
+  });
 
-overlay.addEventListener('click', () => {
-  navLinks.classList.remove('show');
-  overlay.classList.remove('show');
-  document.body.classList.remove('menu-open');
-});
+  overlay.addEventListener('click', () => {
+    navLinks.classList.remove('show');
+    overlay.classList.remove('show');
+    document.body.classList.remove('menu-open');
+    menuToggle.classList.remove('open');
+  });
 
-
-  // Optional: Close menu when clicking a link
   document.querySelectorAll('nav ul li a').forEach(link => {
     link.addEventListener('click', () => {
       navLinks.classList.remove('show');
+      overlay.classList.remove('show');
+      document.body.classList.remove('menu-open');
       menuToggle.classList.remove('open');
     });
   });
-
-  // Optional: Close when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
-      navLinks.classList.remove('show');
-      menuToggle.classList.remove('open');
-    }
-  });
 </script>
+
 
 
 	
@@ -571,7 +568,7 @@ overlay.addEventListener('click', () => {
   });
 });  
   </script>
-<div class="overlay"></div>
+
 </body>
 </html>
 
