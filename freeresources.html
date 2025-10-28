@@ -362,26 +362,46 @@ nav ul.show ~ .overlay {
   pointer-events: auto;
 }*/
 
+/* Overlay background */
 .menu-overlay {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15, 23, 32, 0.35); /* semi-transparent dark */
-  backdrop-filter: blur(10px); /* glass effect */
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 900;
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.1);
+  display: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
 }
 
-.menu-overlay.show {
+.menu-overlay.active {
   display: block;
+  opacity: 1;
 }
 
-	body.menu-open {
-  overflow: hidden;
+/* The actual menu drawer */
+nav {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 70%;
+  height: 100vh;
+  background: rgba(15, 23, 32, 0.4); /* glass-like dark panel */
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: right 0.4s ease;
+  z-index: 20;
 }
+
+nav.active {
+  right: 0;
+}
+
 
 
 </style>
@@ -492,33 +512,23 @@ nav ul.show ~ .overlay {
   </footer>
 
 <script>
-  const menuToggle = document.querySelector('.menu-toggle');
-  const navLinks = document.querySelector('nav ul');
-  const overlay = document.querySelector('.menu-overlay');
+const menuBtn = document.querySelector('.menu-btn');
+const nav = document.querySelector('nav');
+const overlay = document.querySelector('.menu-overlay');
 
-  menuToggle.addEventListener('click', () => {
-    menuToggle.classList.toggle('open');
-    navLinks.classList.toggle('show');
-    overlay.classList.toggle('show');
-    document.body.classList.toggle('menu-open');
-  });
+menuBtn.addEventListener('click', () => {
+  menuBtn.classList.toggle('open');
+  nav.classList.toggle('active');
+  overlay.classList.toggle('active');
+});
 
-  overlay.addEventListener('click', () => {
-    navLinks.classList.remove('show');
-    overlay.classList.remove('show');
-    document.body.classList.remove('menu-open');
-    menuToggle.classList.remove('open');
-  });
-
-  document.querySelectorAll('nav ul li a').forEach(link => {
-    link.addEventListener('click', () => {
-      navLinks.classList.remove('show');
-      overlay.classList.remove('show');
-      document.body.classList.remove('menu-open');
-      menuToggle.classList.remove('open');
-    });
-  });
+overlay.addEventListener('click', () => {
+  menuBtn.classList.remove('open');
+  nav.classList.remove('active');
+  overlay.classList.remove('active');
+});
 </script>
+
 
 
 
