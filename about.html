@@ -231,6 +231,32 @@
     font-size: 1rem;
   }
 }
+
+	  /* Hide nav links by default on small screens */
+@media (max-width: 900px) {
+  nav ul {
+	display: none;
+	flex-direction: column;
+	position: absolute;
+	top: 70px;
+	right: 20px;
+	background: rgba(15, 23, 32, 0.95);
+	padding: 20px;
+	border-radius: 12px;
+	box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+
+  nav
+http://
+ul.show {
+	display: flex;
+  }
+
+  .menu-toggle {
+	display: block;
+  }
+}
+
     
   </style>
 </head>
@@ -335,6 +361,16 @@
       </div>
     </div>
   </footer>
+
+	<script>
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navLinks = document.querySelector('nav ul');
+
+  menuToggle.addEventListener('click', () => {
+	navLinks.classList.toggle('show');
+  });
+</script>
+
 
   <script>
   // signup form
