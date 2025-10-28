@@ -308,7 +308,7 @@
   }
 
   /* visible state */
-  nav http://ul.show {
+  nav ul.show {
     display: flex; /* ensure flex layout when visible */
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -465,7 +465,7 @@
 
     // Optional: close menu when clicking outside (nice UX)
     document.addEventListener('click', (e) => {
-      if (!menuToggle.contains(http://e.target) && !navLinks.contains(http://e.target)) {
+      if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
         if (navLinks.classList.contains('show')) {
           navLinks.classList.remove('show');
           menuToggle.classList.remove('open');
