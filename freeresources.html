@@ -275,61 +275,77 @@
   }
 }
 
-/* Mobile nav styles */
+/* Morphing hamburger → X */
 .menu-toggle {
   display: none;
-  background: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 22px;
   border: none;
-  color: var(--muted);
-  font-size: 24px;
+  background: none;
   cursor: pointer;
+  z-index: 1001; /* sits above the sliding menu */
 }
 
-/* Hide nav links by default on small screens and animate show/hide */
-@media
- (max-width: 900px) {
-  nav ul {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 70px;
-    right: 20px;
-    background: rgba(15, 23, 32, 0.95);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+.menu-toggle .bar {
+  height: 3px;
+  width: 100%;
+  background-color: white; /* or your accent */
+  border-radius: 2px;
+  transition: all 0.35s ease;
+}
 
-    /* start hidden state for animation */
-    opacity: 0;
-    transform: translateY(-10px) scale(0.98);
-    transform-origin: top right;
-    transition: opacity 220ms var(--ease), transform 220ms var(--ease);
-    pointer-events: none;
-  }
+/* morphing into X */
+.menu-toggle.open .bar:nth-child(1) {
+  transform: rotate(45deg);
+  position: relative;
+  top: 9px;
+}
+.menu-toggle.open .bar:nth-child(2) {
+  opacity: 0;
+}
+.menu-toggle.open .bar:nth-child(3) {
+  transform: rotate(-45deg);
+  position: relative;
+  top: -9px;
+}
 
-  /* visible state */
-  nav ul.show {
-    display: flex; /* ensure flex layout when visible */
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    pointer-events: auto;
-  }
 
+
+
+
+
+
+@media (max-width: 900px) {
   .menu-toggle {
-    display: block;
+    display: flex;
+  }
+
+  nav ul {
+    position: fixed;
+    top: 0;
+    right: -100%; /* start hidden off-screen */
+    height: 100vh;
+    width: 70%;
+    background-color: #0f1720; /* your site’s background color */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    transition: right 0.4s ease;
+    z-index: 1000;
+  }
+
+  nav ul.show {
+    right: 0; /* slides in */
+  }
+
+  nav ul li a {
+    font-size: 1.2rem;
   }
 }
 
-/* Icon animation: smooth rotate/scale when switching */
-.menu-toggle i {
-  transition: transform 220ms var(--ease), opacity 220ms var(--ease);
-  display: inline-block; /* ensures transform works well */
-}
-
-/* Optional: small rotate when opening for micro-feedback */
-.menu-toggle.open i {
-  transform: rotate(90deg) scale(1.05);
-}
 	
 </style>
 </head>
@@ -352,8 +368,11 @@
           <li><a href="contact.html">Contact</a></li>
         </ul>
         <button class="menu-toggle" aria-label="Toggle menu">
-	<i class="fa-solid fa-bars"></i>
-  </button>
+  <span class="bar"></span>
+  <span class="bar"></span>
+  <span class="bar"></span>
+</button>
+
 
       </nav>
     </div>
@@ -436,48 +455,31 @@
   </footer>
 
 <script>
-  // Mobile menu toggle with icon switch and small animation
   const menuToggle = document.querySelector('.menu-toggle');
   const navLinks = document.querySelector('nav ul');
 
-  // safety: only run if elements exist
-  if (menuToggle && navLinks) {
-    const toggleIcon = menuToggle.querySelector('i');
+  menuToggle.addEventListener('click', () => {
+    navLinks.classList.toggle('show');
+    menuToggle.classList.toggle('open');
+  });
 
-    menuToggle.addEventListener('click', () => {
-      // toggle menu visibility
-      navLinks.classList.toggle('show');
-
-      // toggle button open class (used for small css transform)
-      menuToggle.classList.toggle('open');
-
-      // toggle icon (bars <-> x)
-      if (toggleIcon) {
-        if (navLinks.classList.contains('show')) {
-          toggleIcon.classList.remove('fa-bars');
-          toggleIcon.classList.add('fa-xmark'); // X icon
-        } else {
-          toggleIcon.classList.remove('fa-xmark');
-          toggleIcon.classList.add('fa-bars');
-        }
-      }
+  // Optional: Close menu when clicking a link
+  document.querySelectorAll('nav ul li a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('show');
+      menuToggle.classList.remove('open');
     });
+  });
 
-    // Optional: close menu when clicking outside (nice UX)
-    document.addEventListener('click', (e) => {
-      if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
-        if (navLinks.classList.contains('show')) {
-          navLinks.classList.remove('show');
-          menuToggle.classList.remove('open');
-          if (toggleIcon) {
-            toggleIcon.classList.remove('fa-xmark');
-            toggleIcon.classList.add('fa-bars');
-          }
-        }
-      }
-    });
-  }
+  // Optional: Close when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
+      navLinks.classList.remove('show');
+      menuToggle.classList.remove('open');
+    }
+  });
 </script>
+
 
 	
  <script>
