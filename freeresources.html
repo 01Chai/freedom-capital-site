@@ -362,7 +362,28 @@ nav ul.show ~ .overlay {
   pointer-events: auto;
 }
 
-	
+.menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 32, 0.35); /* semi-transparent dark */
+  backdrop-filter: blur(10px); /* glass effect */
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 900;
+}
+
+.menu-overlay.show {
+  display: block;
+}
+
+	body.menu-open {
+  overflow: hidden;
+}
+
+
 </style>
 </head>
 
@@ -474,9 +495,17 @@ nav ul.show ~ .overlay {
   const navLinks = document.querySelector('nav ul');
 
   menuToggle.addEventListener('click', () => {
-    navLinks.classList.toggle('show');
-    menuToggle.classList.toggle('open');
-  });
+  navLinks.classList.toggle('show');
+  overlay.classList.toggle('show');
+  document.body.classList.toggle('menu-open');
+});
+
+overlay.addEventListener('click', () => {
+  navLinks.classList.remove('show');
+  overlay.classList.remove('show');
+  document.body.classList.remove('menu-open');
+});
+
 
   // Optional: Close menu when clicking a link
   document.querySelectorAll('nav ul li a').forEach(link => {
