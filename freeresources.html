@@ -207,9 +207,9 @@
   }
   .social:hover { color: #fff; background: rgba(255,255,255,0.03); transform: translateY(-4px); }
 
-  @media (max-width:900px) {
+  /*@media (max-width:900px) {
     nav ul { display: none; }
-  }
+  }*/
   
   .courses-grid {
   display: flex;
@@ -375,6 +375,12 @@ nav ul.show ~ .overlay {
       </div>
 
       <nav aria-label="Main navigation">
+		  <button class="menu-toggle" aria-label="Toggle menu">
+  <span class="bar"></span>
+  <span class="bar"></span>
+  <span class="bar"></span>
+</button>
+		  
         <ul>
           <li><a href="inde">Home</a></li>
           <li><a href="freeresources.html" style="color:#fff;">Free Resources</a></li>
@@ -383,13 +389,6 @@ nav ul.show ~ .overlay {
           <li><a href="about.html">About</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
-        <button class="menu-toggle" aria-label="Toggle menu">
-  <span class="bar"></span>
-  <span class="bar"></span>
-  <span class="bar"></span>
-</button>
-
-
       </nav>
     </div>
   </header>
