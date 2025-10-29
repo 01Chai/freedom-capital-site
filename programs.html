@@ -331,6 +331,16 @@
   transform: rotate(90deg) scale(1.05);
 }
 
+/* Ensure nav menu is above everything */
+nav ul {
+  z-index: 1000;
+}
+
+/* Add extra side padding for mobile */
+@media (max-width: 600px) {
+  .container {
+    padding: 0 16px;
+  }
 
 	
 </style>
