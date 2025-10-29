@@ -284,30 +284,62 @@
   cursor: pointer;
 }
 
-/* Hide nav links by default on small screens */
-@media (max-width: 900px) {
+/* Mobile nav styles */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Hide nav links by default on small screens and animate show/hide */
+@media
+ (max-width: 900px) {
   nav ul {
-	display: none;
-	flex-direction: column;
-	position: absolute;
-	top: 70px;
-	right: 20px;
-	background: rgba(15, 23, 32, 0.95);
-	padding: 20px;
-	border-radius: 12px;
-	box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: rgba(15, 23, 32, 0.95);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+
+    /* start hidden state for animation */
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+    transform-origin: top right;
+    transition: opacity 220ms var(--ease), transform 220ms var(--ease);
+    pointer-events: none;
   }
 
-  nav
-http://
-ul.show {
-	display: flex;
+  /* visible state */
+  nav ul.show {
+    display: flex; /* ensure flex layout when visible */
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
   }
 
   .menu-toggle {
-	display: block;
+    display: block;
   }
 }
+
+/* Icon animation: smooth rotate/scale when switching */
+.menu-toggle i {
+  transition: transform 220ms var(--ease), opacity 220ms var(--ease);
+  display: inline-block; /* ensures transform works well */
+}
+
+/* Optional: small rotate when opening for micro-feedback */
+.menu-toggle.open i {
+  transform: rotate(90deg) scale(1.05);
+}
+
 
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -426,13 +458,49 @@ ul.show {
 </form>
 
 <script>
+  // Mobile menu toggle with icon switch and small animation
   const menuToggle = document.querySelector('.menu-toggle');
   const navLinks = document.querySelector('nav ul');
 
-  menuToggle.addEventListener('click', () => {
-	navLinks.classList.toggle('show');
-  });
+  // safety: only run if elements exist
+  if (menuToggle && navLinks) {
+    const toggleIcon = menuToggle.querySelector('i');
+
+    menuToggle.addEventListener('click', () => {
+      // toggle menu visibility
+      navLinks.classList.toggle('show');
+
+      // toggle button open class (used for small css transform)
+      menuToggle.classList.toggle('open');
+
+      // toggle icon (bars <-> x)
+      if (toggleIcon) {
+        if (navLinks.classList.contains('show')) {
+          toggleIcon.classList.remove('fa-bars');
+          toggleIcon.classList.add('fa-xmark'); // X icon
+        } else {
+          toggleIcon.classList.remove('fa-xmark');
+          toggleIcon.classList.add('fa-bars');
+        }
+      }
+    });
+
+    // Optional: close menu when clicking outside (nice UX)
+    document.addEventListener('click', (e) => {
+      if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
+        if (navLinks.classList.contains('show')) {
+          navLinks.classList.remove('show');
+          menuToggle.classList.remove('open');
+          if (toggleIcon) {
+            toggleIcon.classList.remove('fa-xmark');
+            toggleIcon.classList.add('fa-bars');
+          }
+        }
+      }
+    });
+  }
 </script>
+
 
 	
 <script>
