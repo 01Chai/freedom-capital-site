@@ -76,41 +76,30 @@
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   border-radius: 16px;
   padding: 18px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(255,255,255,0.03);
-  /* remove min-height so it fits the photo naturally */
+  min-height: 300px;
 }
 
 .photo-placeholder {
   width: 320px;
   height: 320px;
   border-radius: 12px;
-  position: relative; /* needed for the glow fix */
+  overflow: hidden; /* keeps corners rounded */
   border: 1px solid rgba(255,255,255,0.02);
   background: linear-gradient(180deg, #0f1417, #0b0e11);
+  box-shadow:0 0 40px rgba(16,185,129,0.15);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* image stays inside neatly */
 .photo-placeholder img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-}
-
-/* 🔹 visible glow outside the frame */
-.photo-placeholder::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 136, 255, 0.3); /* soft blue glow */
-  pointer-events: none;
+  object-fit: cover; /* fills frame neatly */
 }
   /* Section fade (kept as before) */
   section{opacity:0; transform:translateY(10px); transition:opacity .6s var(--ease), transform .6s var(--ease);}
