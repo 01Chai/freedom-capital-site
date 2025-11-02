@@ -109,6 +109,18 @@
     gap: 18px;
   }
 
+	.contact-card {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease-out;
+}
+
+.contact-card.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
   label { font-weight: 600; font-size: 0.95rem; color: var(--muted); }
 
   .input, textarea {
@@ -416,24 +428,31 @@ header {
     <input type="hidden" name="form-name" value="contact">
 
     <div>
-      <label for="name">Full Name</label>
-      <input class="input" type="text" id="name" name="name" placeholder="Your full name" required>
-    </div>
+  <label for="name">Full Name</label>
+  <input class="input" type="text" id="name" name="name" placeholder="Your full name" required>
+</div>
 
-    <div>
-      <label for="email">Email</label>
-      <input class="input" type="email" id="email" name="email" placeholder="Your email" required>
-    </div>
+<div>
+  <label for="email">Email</label>
+  <input class="input" type="email" id="email" name="email" placeholder="Your email" required>
+</div>
 
-    <div>
-      <label for="subject">Subject</label>
-      <input class="input" type="text" id="subject" name="subject" placeholder="Subject (optional)">
-    </div>
+<!-- ✅ New Phone Number Field -->
+<div>
+  <label for="phone">Phone Number</label>
+  <input class="input" type="tel" id="phone" name="phone" placeholder="Your phone number" required>
+</div>
 
-    <div>
-      <label for="message">Message</label>
-      <textarea id="message" name="message" placeholder="Your message..." required></textarea>
-    </div>
+<div>
+  <label for="subject">Subject</label>
+  <input class="input" type="text" id="subject" name="subject" placeholder="Subject (optional)">
+</div>
+
+<div>
+  <label for="message">Message</label>
+  <textarea id="message" name="message" placeholder="Your message..." required></textarea>
+</div>
+
 
     <button class="submit" type="submit">Send Message</button>
     <div id="form-message"></div>
@@ -493,6 +512,29 @@ header {
   <textarea name="message"></textarea>
 </form>
 
+<script>
+	//contact form animation
+document.addEventListener("DOMContentLoaded", () => {
+  const contactCard = document.querySelector(".contact-card");
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        contactCard.classList.add("animate");
+        observer.unobserve(contactCard);
+      }
+    });
+  });
+
+  observer.observe(contactCard);
+
+  // 🔥 Fallback: if already visible on load (like on desktop)
+  if (contactCard.getBoundingClientRect().top < window.innerHeight) {
+    contactCard.classList.add("animate");
+  }
+});
+</script>
+
+	
 <script>
   // Mobile menu toggle with icon switch and small animation
   const menuToggle = document.querySelector('.menu-toggle');
