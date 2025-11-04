@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -331,7 +332,7 @@
   transform: rotate(90deg) scale(1.05);
 }
 
-	/* Ensure nav menu is above everything */
+/* Ensure nav menu is above everything */
 nav ul {
   z-index: 1000;
 }
@@ -342,6 +343,7 @@ nav ul {
     padding: 0 16px;
   }
 
+	
 </style>
 </head>
 
@@ -356,8 +358,8 @@ nav ul {
       <nav aria-label="Main navigation">
         <ul>
           <li><a href="index">Home</a></li>
-          <li><a href="freeresources.html" style="color:#fff;">Free Resources</a></li>
-          <li><a href="programs.html">Programs</a></li>
+          <li><a href="freeresources.html">Free Resources</a></li>
+          <li><a href="programs.html" style="color:#fff;">Programs</a></li>
           <li><a href="affiliates.html">Affiliates</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="contact.html">Contact</a></li>
@@ -371,36 +373,35 @@ nav ul {
   </header>
 
   <main>
- <div class="courses-grid" data-sb-object-id="free-trading-course">
-  <div class="course-card">
-    <h1 data-sb-field-path="title">Free Trading Course</h1>
-    <p data-sb-field-path="description">
-      Learn the core strategies and mindset that help traders build confidence and consistency, all in one free module.
-    </p>
-    <button 
-      onclick="window.location.href='https://free-trading-plan.netlify.app/'"
-      data-sb-field-path="buttonText"
-    >
-      Get free model
-    </button>
-  </div>
+  <div class="courses-grid">
+    <div class="course-card" data-sb-object-id="courses-section">
+  <h1 data-sb-field-path="title">Courses</h1>
+  <p data-sb-field-path="description">
+    Join Atif’s exclusive trading program and learn the proven system to become a consistently profitable trader.
+  </p>
+  <button onclick="window.location.href='#'" data-sb-field-path="buttonText">
+    View Courses
+  </button>
 </div>
 
-<!-- Room for additional cards
-    
-    <div class="course-card">
-      <h1>Beginner Bootcamp</h1>
-      <p>Master the basics of trading, risk management, and chart reading — perfect for those starting out.</p>
-      <button onclick="window.location.href='#'">Join for Free</button>
-    </div>
+<div class="course-card" data-sb-object-id="products-section">
+  <h1 data-sb-field-path="title">Products</h1>
+  <p data-sb-field-path="description">
+    Discover the proven strategies and tools Atif and his students use to trade profitably and achieve financial freedom.
+  </p>
+  <button onclick="window.location.href='products.html'" data-sb-field-path="buttonText">
+    See Collection
+  </button>
+</div>
 
+
+    <!-- Room for more cards 
     <div class="course-card">
       <h1>Forex Accelerator</h1>
       <p>Learn high-probability setups and daily strategies designed for consistent currency trading success.</p>
       <button onclick="window.location.href='#'">Enroll Now</button>
     </div>
     -->
-    
   </div>
 </main>
 
@@ -410,14 +411,14 @@ nav ul {
     <p style="color:var(--muted);max-width:60ch;margin:0 auto;">Four Weekly Insights, practical trading ideas, and expert guidance to accelerate your journey toward financial freedom.</p>
 
     <div class="newsletter" role="form" aria-label="Subscribe to Freedom Capital">
-      <form id="subscription-form" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:12px">
-        <div class="inputs" role="group" aria-label="Subscribe inputs">
-          <input class="input" type="text" id="first_name" name="first_name" placeholder="Your first name" required />
-          <input class="input" type="email" id="email" name="email" placeholder="Your email" required />
-          <button class="submit" type="submit">Subscribe</button>
-        </div>
-        <div id="form-error-message" style="color:var(--muted);font-size:13px"></div>
-      </form>
+       <form id="subscription-form" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:12px">
+    <div class="inputs" role="group" aria-label="Subscribe inputs">
+      <input class="input" type="text" id="first_name" name="first_name" placeholder="Your first name" required/>
+      <input class="input" type="email" id="email" name="email" placeholder="Your email" required />
+      <button class="submit" type="submit">Subscribe</button>
+    </div>
+    <div id="form-error-message" style="color:#ff6b6b;font-size:14px;margin-top:8px;"></div>
+  </form>
       <div style="margin-top:6px">
         <a href="#" style="color:var(--accent);text-decoration:underline">View past issues →</a>
       </div>
@@ -430,7 +431,8 @@ nav ul {
       <a class="social" href="https://www.instagram.com/atifhussainreal/">Instagram</a>
       <a class="social" href="https://x.com/AtifHussainOG">Twitter</a>
       <a class="social" href="#">LinkedIn</a>
-      <a class="social" href="https://www.youtube.com/@AtifHussainOG?sub_confirmation=1">YouTube</a>
+      <a class="social" href="https://youtube.com/@atifhussainog?si=kQmLczEkh5N-TDnF
+">YouTube</a>
     </div>
   </section>
 
@@ -450,7 +452,8 @@ nav ul {
         <a class="social" href="https://www.instagram.com/atifhussainreal/">Instagram</a>
         <a class="social" href="https://x.com/AtifHussainOG">Twitter</a>
         <a class="social" href="#">LinkedIn</a>
-        <a class="social" href="https://www.youtube.com/@AtifHussainOG?sub_confirmation=1">YouTube</a>
+        <a class="social" href="https://youtube.com/@atifhussainog?si=kQmLczEkh5N-TDnF
+">YouTube</a>
       </div>
     </div>
   </footer>
@@ -499,8 +502,9 @@ nav ul {
   }
 </script>
 
+
 	
- <script>
+<script>
   // signup form
     document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("subscription-form");
