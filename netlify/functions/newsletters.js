@@ -15,7 +15,8 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3`;
+    // Add timestamp to avoid Beehiiv API caching
+const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3&timestamp=${Date.now()}`;
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${apiKey}`,
