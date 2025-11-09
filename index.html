@@ -758,8 +758,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("youtube-container");
 
   try {
-    // FIXED: Added cache busting
-    const res = await fetch("/.netlify/functions/youtube?v=" + Date.now());
+    const res = await fetch("/.netlify/functions/youtube");
     if (!res.ok) throw new Error("Failed to load videos");
     const videos = await res.json();
 
@@ -774,8 +773,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             src="https://youtube.com/embed/${video.videoId}" 
             title="${video.title}" 
             frameborder="0" 
-            allowfullscreen
-            loading="lazy">
+            allowfullscreen>
           </iframe>
         </div>
         <p style="margin-top:10px;color:var(--muted);font-size:14px;">${video.title}</p>
