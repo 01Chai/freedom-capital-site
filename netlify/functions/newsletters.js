@@ -16,8 +16,8 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // FIXED: Added status=published & sort=published_at for LATEST posts
-    const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3&status=published&sort=published_at&timestamp=${Date.now()}`;
+    // CRITICAL: sort=publish_date + direction=desc = NEWEST FIRST
+    const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3&status=published&sort=publish_date&direction=desc&timestamp=${Date.now()}`;
     
     const response = await fetch(url, {
       headers: {
@@ -48,7 +48,7 @@ exports.handler = async (event, context) => {
       published_at: post.published_at || ""
     }));
 
-    console.log("Fetched posts:", posts); // Check Netlify logs
+    console.log("Fetched posts (should be newest):", posts);
 
     return {
       statusCode: 200,
