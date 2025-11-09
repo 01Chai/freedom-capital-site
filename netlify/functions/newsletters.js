@@ -47,6 +47,8 @@ const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3&time
 
     return {
       statusCode: 200,
+       'Cache-Control': 'no-cache, no-store, must-revalidate',
+  },
       body: JSON.stringify(posts)
     };
 
