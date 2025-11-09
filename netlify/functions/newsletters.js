@@ -1,4 +1,5 @@
 // netlify/functions/newsletters.js
+
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 exports.handler = async (event, context) => {
@@ -15,12 +16,14 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Add timestamp to avoid Beehiiv API caching
-const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3&timestamp=${Date.now()}`;
+    // 🧩 Add timestamp to force fresh fetch
+    const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3&timestamp=${Date.now()}`;
+    
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache"
       }
     });
 
@@ -45,10 +48,14 @@ const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3&time
       published_at: post.published_at || ""
     }));
 
+    console.log("Fetched posts:", posts);
+
+    // ✅ Add no-cache headers here
     return {
       statusCode: 200,
-       'Cache-Control': 'no-cache, no-store, must-revalidate',
-  },
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
       body: JSON.stringify(posts)
     };
 
@@ -63,4 +70,3 @@ const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3&time
     };
   }
 };
-
