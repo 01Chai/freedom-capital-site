@@ -647,16 +647,13 @@ nav ul {
       }
 
       card.innerHTML = `
-  <img src="${imgSrc}" alt="${post.title}" class="card-image" loading="lazy">
-  <div class="card-content">
-    <h4>${post.title}</h4>
-    <small style="color:var(--muted);font-size:0.8rem;display:block;margin-top:4px;opacity:0.8;">
-      ${post.published_at ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Draft'}
-    </small>
-    <p class="card-description">${post.subtitle || 'Read this post for practical trading insights.'}</p>
-  </div>
-  <a class="btn btn-ghost card-button" href="${post.url}" target="_blank">Read More</a>
-`;
+        <img src="${imgSrc}" alt="${post.title}" class="card-image" loading="lazy">
+        <div class="card-content">
+          <h4>${post.title}</h4>
+          <p class="card-description">${post.subtitle || 'Read this post for practical trading insights.'}</p>
+        </div>
+        <a class="btn btn-ghost card-button" href="${post.url}" target="_blank">Read More</a>
+      `;
       container.appendChild(card);
     }
   } catch (err) {
@@ -761,7 +758,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("youtube-container");
 
   try {
-    const res = await fetch("/.netlify/functions/youtube");
+    // FIXED: Added cache busting
+    const res = await fetch("/.netlify/functions/youtube?v=" + Date.now());
     if (!res.ok) throw new Error("Failed to load videos");
     const videos = await res.json();
 
@@ -776,7 +774,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             src="https://youtube.com/embed/${video.videoId}" 
             title="${video.title}" 
             frameborder="0" 
-            allowfullscreen>
+            allowfullscreen
+            loading="lazy">
           </iframe>
         </div>
         <p style="margin-top:10px;color:var(--muted);font-size:14px;">${video.title}</p>
