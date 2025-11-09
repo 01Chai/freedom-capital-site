@@ -353,6 +353,38 @@ nav ul {
     padding: 0 16px;
   }
 
+	.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Crucial: makes all cards equal height in grid */
+  background: linear-gradient(180deg, rgba(255,255,255,0.016), rgba(255,255,255,0.01));
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,0.03);
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(2,6,8,0.6);
+}
+
+.card-content {
+  flex-grow: 1; /* Takes up all available space */
+  display: flex;
+  flex-direction: column;
+}
+
+.card-description {
+  color: var(--muted);
+  margin-top: 8px;
+  flex-grow: 1; /* Ensures text expands but doesn't push button */
+}
+
+.card-button {
+  margin-top: 12px; /* Space above button */
+  align-self: flex-start; /* Optional: left-align button */
+}
 	
 </style>
 </head>
@@ -583,12 +615,12 @@ nav ul {
       const card = document.createElement('article');
       card.className = 'card';
       card.innerHTML = `
-        <h4>${post.title}</h4>
-        <p style="color:var(--muted)">${post.subtitle || 'Read this post for practical trading insights.'}</p>
-        <div style="margin-top:10px">
-          <a class="btn btn-ghost" href="${post.url}" target="_blank">Read More</a>
-        </div>
-      `;
+  <div class="card-content">
+    <h4>${post.title}</h4>
+    <p class="card-description">${post.subtitle || 'Read this post for practical trading insights.'}</p>
+  </div>
+  <a class="btn btn-ghost card-button" href="${post.url}" target="_blank">Read More</a>
+`;
       container.appendChild(card);
     });
   } catch (err) {
