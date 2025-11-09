@@ -651,7 +651,7 @@ nav ul {
         <div class="card-content">
           <h4>${post.title}</h4>
 		  <small style="color:var(--muted);font-size:0.8rem;display:block;margin-top:4px;">
-  ${post.published_at ? new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
+  ${post.published_at ? new Date(post.published_at * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
 </small>
           <p class="card-description">${post.subtitle || 'Read this post for practical trading insights.'}</p>
         </div>
@@ -761,11 +761,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("youtube-container");
 
   try {
-    const res = await fetch("/.netlify/functions/youtube");
-    if (!res.ok) throw new Error("Failed to load videos");
+    // FIXED: Cache busting
+    const res = await fetch("/.netlify/functions/youtube?v=" + Date.now());
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`HTTP ${res.status}: ${text}`);
+    }
     const videos = await res.json();
 
-    container.innerHTML = ""; // Clear placeholder videos
+    container.innerHTML = ""; // Clear old cards
 
     videos.forEach(video => {
       const card = document.createElement("article");
@@ -773,22 +777,32 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.innerHTML = `
         <div class="video-wrapper">
           <iframe 
-            src="https://youtube.com/embed/${video.videoId}" 
+            src="https://www.youtube.com/embed/${video.videoId}" 
             title="${video.title}"
-			<small style="color:var(--muted);font-size:0.75rem;display:block;margin-top:4px;">
-  ${video.published_at ? new Date(video.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}
-</small>
             frameborder="0" 
-            allowfullscreen>
+            allowfullscreen
+            loading="lazy">
           </iframe>
         </div>
-        <p style="margin-top:10px;color:var(--muted);font-size:14px;">${video.title}</p>
+        <div style="padding:12px 0;">
+          <p style="margin:0 0 4px 0; font-weight:600; color:#fff; font-size:15px;">${video.title}</p>
+          <small style="color:var(--muted); font-size:0.75rem;">
+            ${video.published_at ? new Date(video.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
+          </small>
+        </div>
       `;
       container.appendChild(card);
     });
   } catch (err) {
-    console.error("Error fetching videos:", err);
-    container.innerHTML = `<p style="color:#ff6b6b;">Unable to load videos right now. Please try again later.</p>`;
+    console.error("YouTube fetch error:", err);
+    container.innerHTML = `
+      <p style="color:#ff6b6b; grid-column:1/-1; text-align:center; padding:20px;">
+        Unable to load videos. 
+        <a href="https://www.youtube.com/@atifhussainog" target="_blank" style="color:var(--accent); text-decoration:underline;">
+          Watch on YouTube →
+        </a>
+      </p>
+    `;
   }
 });
 </script>
