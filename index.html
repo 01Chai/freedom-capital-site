@@ -617,13 +617,18 @@ nav ul {
     posts.forEach(post => {
       const card = document.createElement('article');
       card.className = 'card';
+
+      // ← FIXED: Use feature_image, not image
+      const imageUrl = post.feature_image || 'images/newsletter-placeholder.jpg';
+
       card.innerHTML = `
-  <div class="card-content">
-    <h4>${post.title}</h4>
-    <p class="card-description">${post.subtitle || 'Read this post for practical trading insights.'}</p>
-  </div>
-  <a class="btn btn-ghost card-button" href="${post.url}" target="_blank">Read More</a>
-`;
+        <img src="${imageUrl}" alt="${post.title}" class="card-image" loading="lazy">
+        <div class="card-content">
+          <h4>${post.title}</h4>
+          <p class="card-description">${post.subtitle || 'Read this post for practical trading insights.'}</p>
+        </div>
+        <a class="btn btn-ghost card-button" href="${post.url}" target="_blank">Read More</a>
+      `;
       container.appendChild(card);
     });
   } catch (err) {
