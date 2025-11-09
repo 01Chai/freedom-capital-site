@@ -16,8 +16,8 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // 🧩 Add timestamp to force fresh fetch
-    const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3&timestamp=${Date.now()}`;
+    // FIXED: Added status=published & sort=published_at for LATEST posts
+    const url = `https://api.beehiiv.com/v2/publications/${pubId}/posts?limit=3&status=published&sort=published_at&timestamp=${Date.now()}`;
     
     const response = await fetch(url, {
       headers: {
@@ -48,13 +48,14 @@ exports.handler = async (event, context) => {
       published_at: post.published_at || ""
     }));
 
-    console.log("Fetched posts:", posts);
+    console.log("Fetched posts:", posts); // Check Netlify logs
 
-    // ✅ Add no-cache headers here
     return {
       statusCode: 200,
       headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       },
       body: JSON.stringify(posts)
     };
