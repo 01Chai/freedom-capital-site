@@ -616,26 +616,39 @@ nav ul {
 <script>
 (async () => {
   try {
-    const res = await fetch('/.netlify/functions/newsletters');
+    // 1. Fetch posts with cache busting
+    const res = await fetch('/.netlify/functions/newsletters?v=' + Date.now());
     if (!res.ok) throw new Error('Failed to load newsletters');
     const posts = await res.json();
 
     const container = document.getElementById('newsletter-container');
     container.innerHTML = '';
 
-    posts.forEach(post => {
+    // 2. Process each post
+    for (const post of posts) {
       const card = document.createElement('article');
       card.className = 'card';
 
       const imageUrl = post.feature_image || 'images/newsletter-placeholder.jpg';
-      const proxyUrl = `https://api.allorigins.us/get?url=${encodeURIComponent(imageUrl)}`;
+
+      let imgSrc = imageUrl;
+
+      // 3. If it's a Beehiiv S3 image, use proxy + base64
+      if (imageUrl.includes('beehiiv-images-production.s3.amazonaws.com')) {
+        try {
+          const proxyRes = await fetch(`https://api.allorigins.us/get?url=${encodeURIComponent(imageUrl)}`);
+          const proxyData = await proxyRes.json();
+          const base64 = proxyData.contents;
+          const mimeType = proxyRes.headers.get('content-type') || 'image/jpeg';
+          imgSrc = `data:${mimeType};base64,${base64}`;
+        } catch (e) {
+          console.warn('Proxy failed, using placeholder', e);
+          imgSrc = 'images/newsletter-placeholder.jpg';
+        }
+      }
 
       card.innerHTML = `
-        <img src="${proxyUrl}" 
-             data-original="${imageUrl}"
-             alt="${post.title}" 
-             class="card-image" 
-             loading="lazy">
+        <img src="${imgSrc}" alt="${post.title}" class="card-image" loading="lazy">
         <div class="card-content">
           <h4>${post.title}</h4>
           <p class="card-description">${post.subtitle || 'Read this post for practical trading insights.'}</p>
@@ -643,9 +656,10 @@ nav ul {
         <a class="btn btn-ghost card-button" href="${post.url}" target="_blank">Read More</a>
       `;
       container.appendChild(card);
-    });
+    }
   } catch (err) {
     console.error('Error:', err);
+    container.innerHTML = '<p style="color:#ff6b6b; grid-column:1/-1;">Failed to load newsletters.</p>';
   }
 })();
 </script>
