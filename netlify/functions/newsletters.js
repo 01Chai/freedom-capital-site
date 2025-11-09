@@ -44,7 +44,7 @@ exports.handler = async (event, context) => {
       title: post.title || "",
       subtitle: post.subtitle || "",
       url: post.web_url || post.url || "",
-      feature_image: post.feature_image || "",
+      feature_image: post.thumbnail_url || post.feature_image || "",
       published_at: post.published_at || ""
     }));
 
