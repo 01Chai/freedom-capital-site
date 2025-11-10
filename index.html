@@ -630,18 +630,14 @@ nav ul {
       const imageUrl = post.feature_image || 'images/newsletter-placeholder.jpg';
       let imgSrc = imageUrl;
 
-      // Use corsproxy.io for Beehiiv S3 images
       if (imageUrl.includes('beehiiv-images-production.s3.amazonaws.com')) {
         try {
           const proxyRes = await fetch(`https://corsproxy.io/?${encodeURIComponent(imageUrl)}`);
           if (proxyRes.ok) {
             const blob = await proxyRes.blob();
             imgSrc = URL.createObjectURL(blob);
-          } else {
-            throw new Error('Proxy failed');
           }
         } catch (e) {
-          console.warn('Proxy failed, using placeholder', e);
           imgSrc = 'images/newsletter-placeholder.jpg';
         }
       }
@@ -650,9 +646,9 @@ nav ul {
         <img src="${imgSrc}" alt="${post.title}" class="card-image" loading="lazy">
         <div class="card-content">
           <h4>${post.title}</h4>
-		  <small style="color:var(--muted);font-size:0.8rem;display:block;margin-top:4px;">
-  ${post.published_at ? new Date(post.published_at * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
-</small>
+          <small style="color:var(--muted);font-size:0.8rem;display:block;margin-top:4px;">
+            ${post.published_at ? new Date(post.published_at * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
+          </small>
           <p class="card-description">${post.subtitle || 'Read this post for practical trading insights.'}</p>
         </div>
         <a class="btn btn-ghost card-button" href="${post.url}" target="_blank">Read More</a>
@@ -661,10 +657,11 @@ nav ul {
     }
   } catch (err) {
     console.error('Error:', err);
-    container.innerHTML = '<p style="color:#ff6b6b; grid-column:1/-1;">Failed to load newsletters.</p>';
+    document.getElementById('newsletter-container').innerHTML = '<p style="color:#ff6b6b; grid-column:1/-1;">Failed to load newsletters.</p>';
   }
 })();
 </script>
+	
 	<script>
   // Mobile menu toggle with icon switch and small animation
   const menuToggle = document.querySelector('.menu-toggle');
