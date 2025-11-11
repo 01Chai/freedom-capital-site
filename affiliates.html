@@ -558,6 +558,36 @@ nav ul {
   });
 </script>
 
+<!-- Freedom Capital Cookie Consent Banner (Standalone) -->
+<div id="cookie-consent" style="position:fixed;bottom:0;left:0;right:0;background:rgba(15,23,32,0.98);backdrop-filter:blur(12px);color:#e6eef3;padding:20px 24px;text-align:center;z-index:9999;border-top:1px solid rgba(255,255,255,0.08);font-family:Inter,system-ui,sans-serif;font-size:14.5px;line-height:1.5;display:none;box-shadow:0 -8px 30px rgba(0,0,0,0.4);">
+  <div class="container" style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;">
+    <span>We use cookies to improve your experience and analyze site performance.</span>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <a href="/privacy.html" style="color:var(--muted);text-decoration:underline;font-size:13px;opacity:0.9;">Learn more</a>
+      <button onclick="acceptCookies()" style="background:linear-gradient(135deg,#f6b86b,#38b981);color:#071018;border:none;padding:11px 24px;border-radius:10px;font-weight:700;cursor:pointer;transition:transform .2s ease;box-shadow:0 4px 15px rgba(56,185,129,0.3);">
+        Accept All
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Pure Cookie Consent – No GA4 dependency
+(function() {
+  const key = 'fc-cookies-accepted';
+  
+  // Show banner only if user hasn't accepted yet
+  if (!localStorage.getItem(key)) {
+    document.getElementById('cookie-consent').style.display = 'block';
+  }
+  
+  // Global accept function
+  window.acceptCookies = function() {
+    localStorage.setItem(key, 'true');
+    document.getElementById('cookie-consent').style.display = 'none';
+  };
+})();
+</script>
 	
 </body>
 </html>
