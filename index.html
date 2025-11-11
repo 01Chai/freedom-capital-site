@@ -807,6 +807,19 @@ document.addEventListener("DOMContentLoaded", async () => {
           </small>
         </div>
       `;
+           // ←Track YouTube card clicks
+      const watchButton = card.querySelector('.card-button') || card.querySelector('div[style*="padding:12px"]');
+      if (watchButton) {
+        watchButton.addEventListener('click', () => {
+          gtag('event', 'video_click', {
+            event_category: 'content',
+            event_label: 'youtube_card_click',
+            video_title: video.title
+          });
+        });
+      }
+      // ← END OF TRACKING CODE
+
       container.appendChild(card);
     });
   } catch (err) {
@@ -820,6 +833,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       </p>
     `;
   }
+});
+</script>
+
+	<script>
+// Freedom Capital — GA4 Events (subscribe, contact, YouTube clicks)
+document.addEventListener('DOMContentLoaded', () => {
+
+  // 1. Newsletter Subscribe (on home, contact, etc.)
+  const subForm = document.getElementById('subscription-form');
+  if (subForm) {
+    subForm.addEventListener('submit', () => {
+      gtag('event', 'generate_lead', {
+        event_category: 'engagement',
+        event_label: 'newsletter_subscribe',
+        value: 50
+      });
+    });
+  }
+
+  // 3. YouTube Card Clicks (only on index.html — add inside your existing YouTube script later)
 });
 </script>
 
