@@ -712,6 +712,38 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 })();
 </script>
+
+<script>
+// Freedom Capital — GA4 Events (subscribe, contact, YouTube clicks)
+document.addEventListener('DOMContentLoaded', () => {
+
+  // 1. Newsletter Subscribe (on home, contact, etc.)
+  const subForm = document.getElementById('subscription-form');
+  if (subForm) {
+    subForm.addEventListener('submit', () => {
+      gtag('event', 'generate_lead', {
+        event_category: 'engagement',
+        event_label: 'newsletter_subscribe',
+        value: 50
+      });
+    });
+  }
+
+  // 2. Contact Form Submit (only on contact.html)
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', () => {
+      gtag('event', 'submit_form', {
+        event_category: 'lead',
+        event_label: 'contact_form',
+        value: 100
+      });
+    });
+  }
+
+  // 3. YouTube Card Clicks (only on index.html — add inside your existing YouTube script later)
+});
+</script>
 	
 </body>
 </html>
