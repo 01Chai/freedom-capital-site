@@ -1,6 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
+	<!-- Google Analytics 4 + Cookie Consent Integration -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FYDD81RV0V"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  // BLOCK tracking until user accepts cookies (this is the crucial part)
+  gtag('consent', 'default', { 'analytics_storage': 'denied' });
+
+  // If user already accepted → instantly turn it on
+  if (localStorage.getItem('fc-cookies-accepted') === 'true') {
+    gtag('consent', 'update', { 'analytics_storage': 'granted' });
+  }
+
+  gtag('config', 'G-FYDD81RV0V', {
+    anonymize_ip: true
+  });
+</script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Affiliates | Freedom Capital</title>
@@ -441,7 +460,7 @@ nav ul {
       <div class="socials">
         <a class="social" href="https://www.instagram.com/atifhussainreal/">Instagram</a>
         <a class="social" href="https://x.com/AtifHussainOG">Twitter</a>
-        <a class="social" href="#">LinkedIn</a>
+        <a class="social" href="#">Tiktok</a>
         <a class="social" href="https://www.youtube.com/@AtifHussainOG?sub_confirmation=1">YouTube</a>
       </div>
     </div>
