@@ -1,14 +1,13 @@
-// test-wp-auth.js
-export async function handler(event, context) {
-  try {
-    // Dynamic import of node-fetch
-    const fetch = (...args) => import('node-fetch').then(mod => mod.default(...args));
+const fetch = require('node-fetch');
 
+exports.handler = async function(event, context) {
+  try {
     const WP_URL = process.env.WP_URL;
     const WP_USER = process.env.WP_USER;
     const WP_PASSWORD = process.env.WP_PASSWORD;
 
-    const response = await fetch(`${WP_URL}/wp-json/wp/v2/youtube_video`, {
+    // Test creating a simple post
+    const response = await fetch(`${WP_URL}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,5 +32,5 @@ export async function handler(event, context) {
       body: JSON.stringify({ error: err.message })
     };
   }
-}
+};
 
