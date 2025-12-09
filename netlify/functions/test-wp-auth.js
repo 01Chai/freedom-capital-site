@@ -1,11 +1,13 @@
-import fetch from 'node-fetch';
-
-const WP_URL = process.env.WP_URL;
-const WP_USER = process.env.WP_USER;
-const WP_PASSWORD = process.env.WP_PASSWORD;
-
+// test-wp-auth.js
 export async function handler(event, context) {
   try {
+    // Dynamic import of node-fetch
+    const fetch = (...args) => import('node-fetch').then(mod => mod.default(...args));
+
+    const WP_URL = process.env.WP_URL;
+    const WP_USER = process.env.WP_USER;
+    const WP_PASSWORD = process.env.WP_PASSWORD;
+
     const response = await fetch(`${WP_URL}/wp-json/wp/v2/youtube_video`, {
       method: 'POST',
       headers: {
@@ -19,10 +21,12 @@ export async function handler(event, context) {
     });
 
     const data = await response.json();
+
     return {
       statusCode: 200,
       body: JSON.stringify(data, null, 2)
     };
+
   } catch (err) {
     return {
       statusCode: 500,
