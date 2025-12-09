@@ -1,54 +1,70 @@
-for (let item of data.items) {
-  if (!item.id.videoId) continue;
+const fetch = require("node-fetch");
 
-  const videoId = item.id.videoId;
-  const title = item.snippet.title;
-  const url = `https://www.youtube.com/watch?v=${videoId}`;
-  const thumbnail = item.snippet.thumbnails.high.url;
+exports.handler = async () => {
+  try {
+    const YT_API_KEY = process.env.YOUTUBE_API_KEY;
+    const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID;
 
-  // Search for existing post
-  const searchResponse = await fetch(`${WP_URL}?search=${encodeURIComponent(title)}`, {
-    headers: {
-      'Authorization': 'Basic ' + Buffer.from(`${WP_USER}:${WP_PASSWORD}`).toString('base64')
+    const WP_USER = process.env.WP_USER;
+    const WP_PASSWORD = process.env.WP_PASSWORD;
+    const WP_SITE_URL = process.env.WP_SITE_URL;
+
+    // WordPress CPT endpoint
+    const WP_ENDPOINT = `${WP_SITE_URL}/wp-json/wp/v2/youtube_videos`;
+
+    // 1) Fetch latest 3 videos
+    const ytUrl = `https://www.googleapis.com/youtube/v3/search?key=${YT_API_KEY}&channelId=${CHANNEL_ID}&part=snippet,id&order=date&maxResults=3`;
+
+    const ytResponse = await fetch(ytUrl);
+    const data = await ytResponse.json();
+
+    if (!data.items) {
+      return { statusCode: 500, body: "Unable to fetch YouTube videos" };
     }
-  });
-  const existingPosts = await searchResponse.json();
 
-  if (existingPosts.length > 0) {
-    // Update existing post
-    const postId = existingPosts[0].id;
-    await fetch(`${WP_URL}/${postId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + Buffer.from(`${WP_USER}:${WP_PASSWORD}`).toString('base64')
-      },
+    // 2) Get existing WP posts to prevent duplicates
+    const existingPostsReq = await fetch(WP_ENDPOINT + "?per_page=20");
+    const existingPosts = await existingPostsReq.json();
+
+    const existingVideoIds = existingPosts.map(post => post.meta?.youtube_id);
+
+    const newVideos = data.items.filter(
+      video => !existingVideoIds.includes(video.id.videoId)
+    );
+
+    // 3) Create posts for NEW videos only
+    for (const video of newVideos) {
+      const title = video.snippet.title;
+      const thumbnail = video.snippet.thumbnails.high.url;
+      const videoId = video.id.videoId;
+
+      await fetch(WP_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            "Basic " + Buffer.from(`${WP_USER}:${WP_PASSWORD}`).toString("base64"),
+        },
+        body: JSON.stringify({
+          title: title,
+          status: "publish",
+          meta: {
+            youtube_id: videoId,
+            youtube_thumbnail_url: thumbnail,
+          },
+        }),
+      });
+    }
+
+    return {
+      statusCode: 200,
       body: JSON.stringify({
-        fields: {
-          youtube_title: title,
-          youtube_url: url,
-          youtube_thumbnail: thumbnail
-        }
-      })
-    });
-  } else {
-    // Create new post
-    await fetch(WP_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + Buffer.from(`${WP_USER}:${WP_PASSWORD}`).toString('base64')
-      },
-      body: JSON.stringify({
-        title: title,
-        status: 'publish',
-        fields: {
-          youtube_title: title,
-          youtube_url: url,
-          youtube_thumbnail: thumbnail
-        }
-      })
-    });
+        message: "YouTube sync complete",
+        newVideos: newVideos.length,
+      }),
+    };
+  } catch (error) {
+    return { statusCode: 500, body: error.toString() };
   }
-}
+};
 
