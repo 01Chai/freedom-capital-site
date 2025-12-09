@@ -1,70 +1,104 @@
-const fetch = require("node-fetch");
-
 exports.handler = async () => {
+  const WP_URL = process.env.WP_URL; // Example: https://your-site.com/wp-json/wp/v2/youtube_videos
+  const WP_USER = process.env.WP_USER;
+  const WP_PASSWORD = process.env.WP_PASSWORD;
+
+  const YT_KEY = process.env.YOUTUBE_API_KEY;
+  const YT_CHANNEL = process.env.YOUTUBE_CHANNEL_ID;
+
   try {
-    const YT_API_KEY = process.env.YOUTUBE_API_KEY;
-    const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID;
-
-    const WP_USER = process.env.WP_USER;
-    const WP_PASSWORD = process.env.WP_PASSWORD;
-    const WP_SITE_URL = process.env.WP_SITE_URL;
-
-    // WordPress CPT endpoint
-    const WP_ENDPOINT = `${WP_SITE_URL}/wp-json/wp/v2/youtube_videos`;
-
-    // 1) Fetch latest 3 videos
-    const ytUrl = `https://www.googleapis.com/youtube/v3/search?key=${YT_API_KEY}&channelId=${CHANNEL_ID}&part=snippet,id&order=date&maxResults=3`;
-
-    const ytResponse = await fetch(ytUrl);
-    const data = await ytResponse.json();
-
-    if (!data.items) {
-      return { statusCode: 500, body: "Unable to fetch YouTube videos" };
-    }
-
-    // 2) Get existing WP posts to prevent duplicates
-    const existingPostsReq = await fetch(WP_ENDPOINT + "?per_page=20");
-    const existingPosts = await existingPostsReq.json();
-
-    const existingVideoIds = existingPosts.map(post => post.meta?.youtube_id);
-
-    const newVideos = data.items.filter(
-      video => !existingVideoIds.includes(video.id.videoId)
+    // Fetch YouTube Videos
+    const ytRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/search?key=${YT_KEY}&channelId=${YT_CHANNEL}&part=snippet,id&order=date&maxResults=20`
     );
 
-    // 3) Create posts for NEW videos only
-    for (const video of newVideos) {
-      const title = video.snippet.title;
-      const thumbnail = video.snippet.thumbnails.high.url;
-      const videoId = video.id.videoId;
+    if (!ytRes.ok) {
+      return {
+        statusCode: 500,
+        body: `YouTube API error: ${ytRes.statusText}`
+      };
+    }
 
-      await fetch(WP_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization:
-            "Basic " + Buffer.from(`${WP_USER}:${WP_PASSWORD}`).toString("base64"),
-        },
-        body: JSON.stringify({
-          title: title,
-          status: "publish",
-          meta: {
-            youtube_id: videoId,
-            youtube_thumbnail_url: thumbnail,
+    const data = await ytRes.json();
+
+    const authHeader =
+      "Basic " + Buffer.from(`${WP_USER}:${WP_PASSWORD}`).toString("base64");
+
+    let results = [];
+
+    for (let item of data.items) {
+      if (!item.id.videoId) continue;
+
+      const videoId = item.id.videoId;
+      const title = item.snippet.title;
+      const url = `https://www.youtube.com/watch?v=${videoId}`;
+      const thumbnail = item.snippet.thumbnails.high.url;
+
+      // 🔎 Search if this YouTube video already exists in WordPress
+      const searchResponse = await fetch(
+        `${WP_URL}?search=${encodeURIComponent(title)}`,
+        {
+          headers: { Authorization: authHeader }
+        }
+      );
+
+      const existing = await searchResponse.json();
+
+      if (existing.length > 0) {
+        // 🔁 UPDATE existing post
+        const postId = existing[0].id;
+
+        await fetch(`${WP_URL}/${postId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authHeader
           },
-        }),
-      });
+          body: JSON.stringify({
+            fields: {
+              youtube_title: title,
+              youtube_url: url,
+              youtube_thumbnail: thumbnail
+            }
+          })
+        });
+
+        results.push(`Updated: ${title}`);
+      } else {
+        // 🆕 CREATE new post
+        await fetch(WP_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: authHeader
+          },
+          body: JSON.stringify({
+            title: title,
+            status: "publish",
+            fields: {
+              youtube_title: title,
+              youtube_url: url,
+              youtube_thumbnail: thumbnail
+            }
+          })
+        });
+
+        results.push(`Created: ${title}`);
+      }
     }
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: "YouTube sync complete",
-        newVideos: newVideos.length,
-      }),
+        message: "Sync complete",
+        results
+      })
     };
-  } catch (error) {
-    return { statusCode: 500, body: error.toString() };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      body: `Error: ${err.message}`
+    };
   }
 };
 
