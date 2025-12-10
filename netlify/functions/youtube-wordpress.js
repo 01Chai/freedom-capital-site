@@ -1,15 +1,11 @@
 exports.handler = async () => {
-  // --- Environment Variables (EVs) ---
   const WP_URL = process.env.WP_URL; 
   const WP_USER = process.env.WP_USER;
   const WP_PASSWORD = process.env.WP_PASSWORD;
-
   const YT_KEY = process.env.YOUTUBE_API_KEY;
   const YT_CHANNEL = process.env.YOUTUBE_CHANNEL_ID;
 
-  // --- API Endpoint Definition ---
-  // CRITICAL CHANGE: Using the dedicated ACF endpoint path
-  const CPT_ENDPOINT = `${WP_URL}/wp-json/acf/v3/youtube_video`; 
+  const CPT_ENDPOINT = `${WP_URL}/wp-json/wp/v2/youtube_video`; // Using the standard endpoint is safer for simple post creation
   
   const authHeader =
     "Basic " + Buffer.from(`${WP_USER}:${WP_PASSWORD}`).toString("base64");
@@ -17,91 +13,49 @@ exports.handler = async () => {
   let results = [];
 
   try {
-    // 1. Fetch YouTube Videos
+    // 1. Fetch only ONE YouTube Video to simplify the test
     const ytRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/search?key=${YT_KEY}&channelId=${YT_CHANNEL}&part=snippet,id&order=date&maxResults=20&type=video`
+      `https://www.googleapis.com/youtube/v3/search?key=${YT_KEY}&channelId=${YT_CHANNEL}&part=snippet,id&order=date&maxResults=1&type=video`
     );
 
-    if (!ytRes.ok) {
-      return {
-        statusCode: 500,
-        body: `YouTube API error: ${ytRes.statusText}`
-      };
-    }
-
     const data = await ytRes.json();
+    const item = data.items[0];
 
-    for (let item of data.items) {
-      const videoId = item.id.videoId;
-      if (!videoId) continue; 
-
-      const youtubeTitle = item.snippet.title;
-      const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
-      const youtubeThumbnail = item.snippet.thumbnails.high.url;
-
-      // 2. Search if this video exists by checking the post title (videoId)
-      // NOTE: We still use the /wp/v2 endpoint for searching, as ACF endpoint is for CRUD.
-      const searchEndpoint = `${WP_URL}/wp-json/wp/v2/youtube_video?search=${videoId}&status=publish`;
-
-      const searchResponse = await fetch(
-        searchEndpoint,
-        { headers: { Authorization: authHeader } }
-      );
+    const videoId = item.id.videoId;
+    const youtubeTitle = item.snippet.title;
+    
+    // --- BARE MINIMUM PAYLOAD ---
+    const postData = {
+        title: youtubeTitle, // Use the real title for this one test
+        status: "publish",
+        content: "Video ID: " + videoId, // Use the video ID as content for tracking
+    };
       
-      if (!searchResponse.ok) { continue; }
+    // 2. EXECUTE THE CREATE API CALL (No search/update logic)
+    const apiRes = await fetch(CPT_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: authHeader
+      },
+      body: JSON.stringify(postData)
+    });
+    
+    const apiResBody = await apiRes.json();
 
-      const existing = await searchResponse.json();
-      
-      // Data object for both update and create
-      const postData = {
-          title: videoId, // Use Video ID as unique identifier
-          status: "publish",
-          content: "", 
-          
-          // CRITICAL CHANGE: Using 'fields' to pass ACF data (Required by the plugin)
-          fields: { 
-              youtube_title: youtubeTitle,
-              youtube_url: youtubeUrl,
-              youtube_thumbnails: youtubeThumbnail,
-          }
-      };
-      
-      // DETERMINE ACTION: UPDATE or CREATE
-      const action = existing.length > 0 ? 'UPDATE' : 'CREATE';
-      // The endpoint MUST be adjusted to the ACF endpoint for the CPT
-      const endpoint = action === 'UPDATE' ? `${CPT_ENDPOINT}/${existing[0].id}` : CPT_ENDPOINT;
-      
-      if (action === 'UPDATE') { delete postData.status; }
-
-      // 3. EXECUTE API CALL
-      const apiRes = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: authHeader
-        },
-        body: JSON.stringify(postData)
-      });
-      
-      const apiResBody = await apiRes.json();
-
-      if (apiRes.ok) {
-        // SUCCESS: Capture the status that was assigned
-        const postStatus = apiResBody.status || 'publish'; // Default to publish if not found
-        results.push(`${action} SUCCESS: ${youtubeTitle} (Status: ${postStatus})`);
-      } else {
-        // FAILURE: CAPTURE THE EXACT WORDPRESS ERROR MESSAGE
-        const errorCode = apiResBody.code || 'UNKNOWN_CODE';
-        const errorMessage = apiResBody.message || apiRes.statusText;
-        results.push(`!!! ${action} FAILED: ${youtubeTitle} -> ERROR CODE: ${errorCode} | MESSAGE: ${errorMessage}`);
-      }
+    if (apiRes.ok) {
+      const postStatus = apiResBody.status || 'unknown'; 
+      results.push(`TEST SUCCESS: ${youtubeTitle} (Status: ${postStatus})`);
+    } else {
+      const errorCode = apiResBody.code || 'UNKNOWN_CODE';
+      const errorMessage = apiResBody.message || apiRes.statusText;
+      results.push(`!!! TEST FAILED: ${youtubeTitle} -> ERROR: ${errorCode} | MESSAGE: ${errorMessage}`);
     }
 
-    // 4. Return Final Sync Status
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: "WordPress-YouTube Sync complete",
+        message: "Final Test Complete",
         results
       })
     };
@@ -109,7 +63,7 @@ exports.handler = async () => {
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: "A fatal error occurred during the sync process.",
+        message: "A fatal error occurred during the test.",
         error: err.message
       })
     };
