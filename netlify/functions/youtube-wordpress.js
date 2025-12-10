@@ -8,7 +8,8 @@ exports.handler = async () => {
   const YT_CHANNEL = process.env.YOUTUBE_CHANNEL_ID;
 
   // --- API Endpoint Definition ---
-  const CPT_ENDPOINT = `${WP_URL}/wp-json/wp/v2/youtube_video`; 
+  // CRITICAL CHANGE: Using the dedicated ACF endpoint path
+  const CPT_ENDPOINT = `${WP_URL}/wp-json/acf/v3/youtube_video`; 
   
   const authHeader =
     "Basic " + Buffer.from(`${WP_USER}:${WP_PASSWORD}`).toString("base64");
@@ -39,8 +40,11 @@ exports.handler = async () => {
       const youtubeThumbnail = item.snippet.thumbnails.high.url;
 
       // 2. Search if this video exists by checking the post title (videoId)
+      // NOTE: We still use the /wp/v2 endpoint for searching, as ACF endpoint is for CRUD.
+      const searchEndpoint = `${WP_URL}/wp-json/wp/v2/youtube_video?search=${videoId}&status=publish`;
+
       const searchResponse = await fetch(
-        `${CPT_ENDPOINT}?search=${videoId}&status=publish`,
+        searchEndpoint,
         { headers: { Authorization: authHeader } }
       );
       
@@ -52,9 +56,10 @@ exports.handler = async () => {
       const postData = {
           title: videoId, // Use Video ID as unique identifier
           status: "publish",
-          content: "", // <--- CRITICAL FIX: Explicitly setting the content field
+          content: "", 
           
-          meta: { 
+          // CRITICAL CHANGE: Using 'fields' to pass ACF data (Required by the plugin)
+          fields: { 
               youtube_title: youtubeTitle,
               youtube_url: youtubeUrl,
               youtube_thumbnails: youtubeThumbnail,
@@ -63,6 +68,7 @@ exports.handler = async () => {
       
       // DETERMINE ACTION: UPDATE or CREATE
       const action = existing.length > 0 ? 'UPDATE' : 'CREATE';
+      // The endpoint MUST be adjusted to the ACF endpoint for the CPT
       const endpoint = action === 'UPDATE' ? `${CPT_ENDPOINT}/${existing[0].id}` : CPT_ENDPOINT;
       
       if (action === 'UPDATE') { delete postData.status; }
@@ -81,7 +87,7 @@ exports.handler = async () => {
 
       if (apiRes.ok) {
         // SUCCESS: Capture the status that was assigned
-        const postStatus = apiResBody.status || 'unknown'; 
+        const postStatus = apiResBody.status || 'publish'; // Default to publish if not found
         results.push(`${action} SUCCESS: ${youtubeTitle} (Status: ${postStatus})`);
       } else {
         // FAILURE: CAPTURE THE EXACT WORDPRESS ERROR MESSAGE
