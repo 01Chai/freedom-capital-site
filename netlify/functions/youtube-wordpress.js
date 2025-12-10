@@ -1,6 +1,5 @@
 exports.handler = async () => {
   // --- Environment Variables (EVs) ---
-  // WP_URL is now correctly set to the root: https://freedomcapitalinstitute.com
   const WP_URL = process.env.WP_URL; 
   const WP_USER = process.env.WP_USER;
   const WP_PASSWORD = process.env.WP_PASSWORD;
@@ -9,7 +8,6 @@ exports.handler = async () => {
   const YT_CHANNEL = process.env.YOUTUBE_CHANNEL_ID;
 
   // --- API Endpoint Definition ---
-  // CRITICAL FIX: Build the full CPT endpoint using the base URL
   const CPT_ENDPOINT = `${WP_URL}/wp-json/wp/v2/youtube_video`; 
   
   const authHeader =
@@ -24,7 +22,6 @@ exports.handler = async () => {
     );
 
     if (!ytRes.ok) {
-      console.error(`YouTube API error: ${ytRes.statusText}`);
       return {
         statusCode: 500,
         body: `YouTube API error: ${ytRes.statusText}`
@@ -41,28 +38,20 @@ exports.handler = async () => {
       const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
       const youtubeThumbnail = item.snippet.thumbnails.high.url;
 
-      // 2. Search if this video exists by checking the post title (which is the Video ID)
+      // 2. Search if this video exists by checking the post title (videoId)
       const searchResponse = await fetch(
         `${CPT_ENDPOINT}?search=${videoId}&status=publish`,
-        {
-          headers: { Authorization: authHeader }
-        }
+        { headers: { Authorization: authHeader } }
       );
       
-      if (!searchResponse.ok) {
-        console.error(`WordPress Search error for video ID "${videoId}": ${searchResponse.statusText}`);
-        continue;
-      }
+      if (!searchResponse.ok) { continue; } // Skip if search fails
 
       const existing = await searchResponse.json();
       
-      // Data object for both update and create
       const postData = {
-          // Use the YouTube video ID as the post title for a unique identifier
-          title: videoId, 
+          title: videoId, // Use Video ID as unique identifier
           status: "publish",
-          
-          // CRITICAL FIX: Using 'meta' to pass ACF data via the standard WP REST API
+          // Using 'meta' for ACF data, as is standard without a specific ACF-to-REST plugin
           meta: { 
               youtube_title: youtubeTitle,
               youtube_url: youtubeUrl,
@@ -70,49 +59,37 @@ exports.handler = async () => {
           }
       };
       
-      if (existing.length > 0) {
-        // 🔁 UPDATE existing post
-        const postId = existing[0].id;
-        delete postData.status;
+      // DETERMINE ACTION: UPDATE or CREATE
+      const action = existing.length > 0 ? 'UPDATE' : 'CREATE';
+      const endpoint = action === 'UPDATE' ? `${CPT_ENDPOINT}/${existing[0].id}` : CPT_ENDPOINT;
+      
+      if (action === 'UPDATE') { delete postData.status; }
 
-        const updateRes = await fetch(`${CPT_ENDPOINT}/${postId}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: authHeader
-          },
-          body: JSON.stringify(postData)
-        });
-        
-        if (updateRes.ok) {
-           results.push(`Updated: ${youtubeTitle} (ID: ${postId})`);
-        } else {
-           const errBody = await updateRes.json();
-           results.push(`Failed to update ${youtubeTitle}: ${errBody.message || updateRes.statusText}`);
-        }
+      // 3. EXECUTE API CALL
+      const apiRes = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: authHeader
+        },
+        body: JSON.stringify(postData)
+      });
+      
+      const apiResBody = await apiRes.json();
 
+      if (apiRes.ok) {
+        // SUCCESS: Capture the status that was assigned
+        const postStatus = apiResBody.status || 'unknown'; 
+        results.push(`${action} SUCCESS: ${youtubeTitle} (Status: ${postStatus})`);
       } else {
-        // 🆕 CREATE new post
-        const createRes = await fetch(CPT_ENDPOINT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: authHeader
-          },
-          body: JSON.stringify(postData)
-        });
-        
-        if (createRes.ok) {
-          const newPost = await createRes.json();
-          results.push(`Created: ${youtubeTitle} (ID: ${newPost.id})`);
-        } else {
-          const errBody = await createRes.json();
-          results.push(`Failed to create ${youtubeTitle}: ${errBody.message || createRes.statusText}`);
-        }
+        // FAILURE: CAPTURE THE EXACT WORDPRESS ERROR MESSAGE
+        const errorCode = apiResBody.code || 'UNKNOWN_CODE';
+        const errorMessage = apiResBody.message || apiRes.statusText;
+        results.push(`!!! ${action} FAILED: ${youtubeTitle} -> ERROR CODE: ${errorCode} | MESSAGE: ${errorMessage}`);
       }
     }
 
-    // 3. Return Final Sync Status
+    // 4. Return Final Sync Status
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -121,7 +98,6 @@ exports.handler = async () => {
       })
     };
   } catch (err) {
-    console.error("Fatal function error:", err);
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -131,6 +107,3 @@ exports.handler = async () => {
     };
   }
 };
-
-
-
