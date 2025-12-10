@@ -44,14 +44,16 @@ exports.handler = async () => {
         { headers: { Authorization: authHeader } }
       );
       
-      if (!searchResponse.ok) { continue; } // Skip if search fails
+      if (!searchResponse.ok) { continue; }
 
       const existing = await searchResponse.json();
       
+      // Data object for both update and create
       const postData = {
           title: videoId, // Use Video ID as unique identifier
           status: "publish",
-          // Using 'meta' for ACF data, as is standard without a specific ACF-to-REST plugin
+          content: "", // <--- CRITICAL FIX: Explicitly setting the content field
+          
           meta: { 
               youtube_title: youtubeTitle,
               youtube_url: youtubeUrl,
