@@ -5,7 +5,7 @@ exports.handler = async (event) => {
   let results = [];
 
   try {
-    // Whop sends POST requests
+    // Only handle POST requests
     if (event.httpMethod !== "POST") {
       return {
         statusCode: 200,
@@ -15,6 +15,7 @@ exports.handler = async (event) => {
       };
     }
 
+    // Parse the incoming Whop payload
     const payload = JSON.parse(event.body || "{}");
 
     const allowedEvents = [
@@ -50,8 +51,9 @@ exports.handler = async (event) => {
       };
     }
 
+    // Call Beehiiv API
     const beehiivRes = await fetch(
-      `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUBLICATION_ID}/subscribers`,
+      `https://api.beehiiv.com/v2/publications/${BEEHIIV_PUBLICATION_ID}/subscriptions`,
       {
         method: "POST",
         headers: {
@@ -60,18 +62,19 @@ exports.handler = async (event) => {
         },
         body: JSON.stringify({
           email: email,
-          first_name: name,
-          send_welcome_email: true,
+          custom_fields: [
+            { name: "First Name", value: name }
+          ]
         }),
       }
     );
 
-    const beehiivBody = await beehiivRes.text();
+    const beehiivBody = await beehiivRes.json();
 
     if (beehiivRes.ok) {
       results.push(`Subscriber added: ${email}`);
     } else {
-      results.push(`Beehiiv error: ${beehiivBody}`);
+      results.push(`Beehiiv error: ${JSON.stringify(beehiivBody)}`);
     }
 
     return {
