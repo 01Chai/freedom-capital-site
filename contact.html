@@ -442,41 +442,95 @@ header {
   </p>
 
   <div class="contact-card">
-  <form id="contactForm" name="contact" method="POST" data-netlify="true">
+  <form
+    id="contactForm"
+    name="contact"
+    method="POST"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    data-netlify-recaptcha="true"
+  >
     <!-- Required hidden input for Netlify -->
     <input type="hidden" name="form-name" value="contact">
 
+    <!-- 🛑 Honeypot field (hidden from humans) -->
+    <p hidden>
+      <label>
+        Don’t fill this out:
+        <input name="bot-field">
+      </label>
+    </p>
+
     <div>
-  <label for="name">Full Name</label>
-  <input class="input" type="text" id="name" name="name" placeholder="Your full name" required>
-</div>
+      <label for="name">Full Name</label>
+      <input
+        class="input"
+        type="text"
+        id="name"
+        name="name"
+        placeholder="Your full name"
+        required
+        minlength="3"
+        pattern=".*\s+.*"
+        title="Please enter your full name"
+      >
+    </div>
 
-<div>
-  <label for="email">Email</label>
-  <input class="input" type="email" id="email" name="email" placeholder="Your email" required>
-</div>
+    <div>
+      <label for="email">Email</label>
+      <input
+        class="input"
+        type="email"
+        id="email"
+        name="email"
+        placeholder="Your email"
+        required
+      >
+    </div>
 
-<!-- ✅ New Phone Number Field -->
-<div>
-  <label for="phone">Phone Number</label>
-  <input class="input" type="tel" id="phone" name="phone" placeholder="Your phone number" required>
-</div>
+    <div>
+      <label for="phone">Phone Number</label>
+      <input
+        class="input"
+        type="tel"
+        id="phone"
+        name="phone"
+        placeholder="Your phone number"
+        required
+        minlength="7"
+      >
+    </div>
 
-<div>
-  <label for="subject">Subject</label>
-  <input class="input" type="text" id="subject" name="subject" placeholder="Subject (optional)">
-</div>
+    <div>
+      <label for="subject">Subject</label>
+      <input
+        class="input"
+        type="text"
+        id="subject"
+        name="subject"
+        placeholder="Subject (optional)"
+      >
+    </div>
 
-<div>
-  <label for="message">Message</label>
-  <textarea id="message" name="message" placeholder="Your message..." required></textarea>
-</div>
+    <div>
+      <label for="message">Message</label>
+      <textarea
+        id="message"
+        name="message"
+        placeholder="Your message..."
+        required
+        minlength="20"
+      ></textarea>
+    </div>
 
+    <!-- reCAPTCHA placeholder -->
+    <div data-netlify-recaptcha="true"></div>
 
     <button class="submit" type="submit">Send Message</button>
     <div id="form-message"></div>
   </form>
 </div>
+	
   <div class="social-icons">
     <a href="https://x.com/AtifHussainOG" class="social-icon"><i class="fa-brands fa-x-twitter"></i></a>
     <a href="https://www.instagram.com/atifhussainreal/" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
